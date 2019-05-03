@@ -1,0 +1,63 @@
+# entity_id for mqtt is a normalized version of name. no åäö and _ instead if blankspace.
+- platform: mqtt
+  state_topic: !secret ruuvi_sovrum
+  name: 'Sovrum Temperatur'
+  unit_of_measurement: "°C"
+  value_template: '{{ value_json.temperature }}'
+  icon: mdi:thermometer
+
+- platform: mqtt
+  state_topic: !secret ruuvi_sovrum
+  name: 'Sovrum Luftfuktighet'
+  unit_of_measurement: "%"
+  value_template: '{{ value_json.humidity }}'
+  icon: mdi:water-percent
+
+- platform: mqtt
+  state_topic: !secret ruuvi_sovrum
+  name: 'Sovrum Lufttryck'
+  unit_of_measurement: "hPa"
+  value_template: '{{ value_json.pressure }}'
+  icon: mdi:nature
+
+- platform: mqtt
+  state_topic: !secret ruuvi_arbetsrum
+  name: 'Arbetsrum Temperatur'
+  unit_of_measurement: "°C"
+  value_template: '{{ value_json.temperature }}'
+  icon: mdi:thermometer
+
+- platform: mqtt
+  state_topic: !secret ruuvi_arbetsrum
+  name: 'Arbetsrum Luftfuktighet'
+  unit_of_measurement: "%"
+  value_template: '{{ value_json.humidity }}'
+  icon: mdi:water-percent
+
+- platform: mqtt
+  state_topic: !secret ruuvi_arbetsrum
+  name: 'Arbetsrum Lufttryck'
+  unit_of_measurement: "hPa"
+  value_template: '{{ value_json.pressure }}'
+  icon: mdi:nature
+
+- platform: mqtt
+  state_topic: !secret ruuvi_grovkok
+  name: 'Grovkök Temperatur'
+  unit_of_measurement: "°C"
+  value_template: '{{ value_json.temperature }}'
+  icon: mdi:thermometer
+
+- platform: mqtt
+  state_topic: !secret ruuvi_grovkok
+  name: 'Grovkök Luftfuktighet'
+  unit_of_measurement: "%"
+  value_template: '{{ value_json.humidity }}'
+  icon: mdi:water-percent
+
+- platform: mqtt
+  state_topic: !secret ruuvi_grovkok
+  name: 'Grovkök Lufttryck'
+  unit_of_measurement: "hPa"
+  value_template: '{{ value_json.pressure }}'
+  icon: mdi:nature

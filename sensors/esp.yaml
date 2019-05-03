@@ -1,0 +1,14 @@
+- platform: mqtt
+  state_topic: !secret robot_utomhus_temperatur
+  name: 'Utomhus temperatur'
+  unit_of_measurement: "°C"
+  icon: mdi:thermometer
+  value_template: "{{ value | round(1) }}"
+
+- platform: mqtt
+  state_topic: /sonoff/garage/tele/SENSOR
+  name: 'sonoff_garage_temperature'
+  unit_of_measurement: "°C"
+  icon: mdi:thermometer
+  value_template: "{{ value_json['DS18B20'].Temperature }}"
+

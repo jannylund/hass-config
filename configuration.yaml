@@ -1,0 +1,125 @@
+homeassistant:
+  name: !secret home_name
+  # Location required to calculate the time the sun rises and sets
+  latitude: !secret lat
+  longitude: !secret long
+  # Impacts weather/sunrise data (altitude above sea level in meters)
+  elevation: 14
+  unit_system: metric
+  time_zone: Europe/Helsinki
+
+  customize:
+    light.sonoff_garage_lights:
+      friendly_name: Garage fasadbelysning
+
+    sensor.sonoff_garage_temperature:
+      friendly_name: Garage temperatur
+
+
+frontend:
+config:
+
+# Uncomment this if you are using SSL/TLS, running in Docker container, etc.
+http:
+  base_url: !secret hass_base_url
+updater:
+discovery:
+
+# Enables support for tracking state changes over time
+history:
+logbook:
+map:
+sun:
+# Cloud
+#cloud:
+automation: !include automations.yaml
+script: !include scripts.yaml
+
+# Philips Hue
+hue:
+  bridges:
+    - host: !secret hue_bridge_host
+
+mqtt:
+  broker: !secret mqtt_broker
+  username: !secret mqtt_username
+  password: !secret mqtt_password
+
+group:
+  utomhus:
+    name: Utomhus
+    view: true
+    entities:
+      - group.gardena
+      - group.garage
+
+  arbetsrum:
+    control: hidden
+    name: Arbetsrum
+    view: no
+    icon: mdi:flash-circle
+    entities:
+      - sensor.arbetsrum_temperatur
+      - sensor.arbetsrum_luftfuktighet
+      - sensor.arbetsrum_lufttryck
+
+  sovrum:
+    control: hidden
+    name: Sovrum
+    view: no
+    icon: mdi:flash-circle
+    entities:
+      - sensor.sovrum_temperatur
+      - sensor.sovrum_luftfuktighet
+      - sensor.sovrum_lufttryck
+
+  grovkok:
+    control: hidden
+    name: Grovkök
+    view: no
+    icon: mdi:flash-circle
+    entities:
+      - sensor.grovkok_temperatur
+      - sensor.grovkok_luftfuktighet
+      - sensor.grovkok_lufttryck
+
+  gardena:
+    control: hidden
+    name: Gardena
+    entities:
+      #- sensor.gardena_temperatur
+      - sensor.gardena_luftfuktighet
+      - sensor.gardena_total_kortid
+      - sensor.gardena_mode
+      - sensor.gardena_wifi_signal
+      - sensor.tid_i_status
+      - sensor.gardena_status_friendly
+      - sensor.gardena_batteriniva
+      - sensor.gardena_spanning
+
+  garage:
+    control: hidden
+    name: Garage
+    entities:
+      - light.sonoff_garage_lights
+      - sensor.sonoff_garage_temperature
+      - sensor.utomhus_temperatur
+
+sensor: !include_dir_merge_list sensors
+
+
+light:
+  - platform: mqtt
+    name: "sonoff_garage_lights"
+    state_topic: "/sonoff/garage/stat/RESULT"
+    value_template: "{{ value_json.POWER }}"
+    command_topic: "/sonoff/garage/cmnd/POWER"
+    availability_topic: "/sonoff/garage/tele/LWT"
+    qos: 1
+    payload_on: "ON"
+    payload_off: "OFF"
+    payload_available: "Online"
+    payload_not_available: "Offline"
+    retain: false
+
+system_health:

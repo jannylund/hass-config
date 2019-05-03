@@ -1,0 +1,6 @@
+.uuid
+home-assistant_v2.db
+.HA_VERSION
+.storage/
+home-assistant.log
+secrets.yaml
