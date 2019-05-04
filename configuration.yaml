@@ -8,21 +8,26 @@ homeassistant:
   unit_system: metric
   time_zone: Europe/Helsinki
 
+  # set view order:
   customize:
-    light.sonoff_garage_lights:
-      friendly_name: Garage fasadbelysning
+    group.floor1:
+      order: 1
+    group.utomhus:
+      order: 2
+    group.batterier:
+      order: 10
 
-    sensor.sonoff_garage_temperature:
-      friendly_name: Garage temperatur
+  # hide any raw signals used for calculation.
+  customize_glob:
+    "sensor.*_raw":
+      hidden: true
 
+  packages: !include_dir_named packages
 
 frontend:
 config:
-
-# Uncomment this if you are using SSL/TLS, running in Docker container, etc.
 http:
   base_url: !secret hass_base_url
-updater:
 discovery:
 
 # Enables support for tracking state changes over time
@@ -30,10 +35,6 @@ history:
 logbook:
 map:
 sun:
-# Cloud
-#cloud:
-automation: !include automations.yaml
-script: !include scripts.yaml
 
 # Philips Hue
 hue:
@@ -53,36 +54,6 @@ group:
       - group.gardena
       - group.garage
 
-  arbetsrum:
-    control: hidden
-    name: Arbetsrum
-    view: no
-    icon: mdi:flash-circle
-    entities:
-      - sensor.arbetsrum_temperatur
-      - sensor.arbetsrum_luftfuktighet
-      - sensor.arbetsrum_lufttryck
-
-  sovrum:
-    control: hidden
-    name: Sovrum
-    view: no
-    icon: mdi:flash-circle
-    entities:
-      - sensor.sovrum_temperatur
-      - sensor.sovrum_luftfuktighet
-      - sensor.sovrum_lufttryck
-
-  grovkok:
-    control: hidden
-    name: Grovkök
-    view: no
-    icon: mdi:flash-circle
-    entities:
-      - sensor.grovkok_temperatur
-      - sensor.grovkok_luftfuktighet
-      - sensor.grovkok_lufttryck
-
   gardena:
     control: hidden
     name: Gardena
@@ -97,29 +68,6 @@ group:
       - sensor.gardena_batteriniva
       - sensor.gardena_spanning
 
-  garage:
-    control: hidden
-    name: Garage
-    entities:
-      - light.sonoff_garage_lights
-      - sensor.sonoff_garage_temperature
-      - sensor.utomhus_temperatur
-
 sensor: !include_dir_merge_list sensors
-
-
-light:
-  - platform: mqtt
-    name: "sonoff_garage_lights"
-    state_topic: "/sonoff/garage/stat/RESULT"
-    value_template: "{{ value_json.POWER }}"
-    command_topic: "/sonoff/garage/cmnd/POWER"
-    availability_topic: "/sonoff/garage/tele/LWT"
-    qos: 1
-    payload_on: "ON"
-    payload_off: "OFF"
-    payload_available: "Online"
-    payload_not_available: "Offline"
-    retain: false
 
 system_health:

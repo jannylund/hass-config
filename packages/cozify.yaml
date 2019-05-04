@@ -1,0 +1,21 @@
+homeassistant:
+  customize:
+    sensor.cozify_moisture_temperature:
+      friendly_name: Diskbänk temperatur
+    sensor.cozify_motion_temperature:
+      friendly_name: Linns rum temperatur
+
+sensor:
+  - platform: mqtt
+    state_topic: !secret cozify_moisture
+    name: cozify_moisture_temperature
+    unit_of_measurement: "°C"
+    value_template: '{{ value_json.state.temperature | round(1) }}'
+    icon: mdi:thermometer
+
+  - platform: mqtt
+    state_topic: !secret cozify_motion
+    name: cozify_motion_temperature
+    unit_of_measurement: "°C"
+    value_template: '{{ value_json.state.temperature | round(1) }}'
+    icon: mdi:thermometer

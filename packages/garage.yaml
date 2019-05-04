@@ -1,0 +1,54 @@
+group:
+  garage:
+    control: hidden
+    name: Garage
+    entities:
+      - light.sonoff_garage_lights
+      - sensor.sonoff_garage_temperature
+      - sensor.utomhus_temperatur
+
+homeassistant:
+  customize:
+    light.sonoff_garage_lights:
+      friendly_name: "Garage fasadbelysning"
+
+    sensor.sonoff_garage_temperature:
+      friendly_name: "Garage temperatur"
+
+# This forces the sonoff to expose power state on HA startup, to avoid being out of sync.
+automation:
+  - alias: "Power state on HA start-up"
+    trigger:
+      platform: homeassistant
+      event: start
+    action:
+      - service: mqtt.publish
+        data:
+          topic: "/sonoff/garage/cmnd/POWER"
+          payload: ""
+      - service: mqtt.publish
+        data:
+          topic: "/sonoff/garage/cmnd/state"
+          payload: ""
+
+light:
+  - platform: mqtt
+    name: sonoff_garage_lights
+    state_topic: "/sonoff/garage/stat/RESULT"
+    value_template: "{{ value_json.POWER }}"
+    command_topic: "/sonoff/garage/cmnd/POWER"
+    availability_topic: "/sonoff/garage/tele/LWT"
+    qos: 1
+    payload_on: "ON"
+    payload_off: "OFF"
+    payload_available: "Online"
+    payload_not_available: "Offline"
+    retain: false
+
+sensor:
+  - platform: mqtt
+    state_topic: /sonoff/garage/tele/SENSOR
+    name: sonoff_garage_temperature
+    unit_of_measurement: "°C"
+    icon: mdi:thermometer
+    value_template: "{{ value_json['DS18B20'].Temperature }}"

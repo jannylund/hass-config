@@ -3,7 +3,7 @@
   state_topic: !secret ruuvi_sovrum
   name: 'Sovrum Temperatur'
   unit_of_measurement: "°C"
-  value_template: '{{ value_json.temperature }}'
+  value_template: '{{ value_json.temperature | round(1) }}'
   icon: mdi:thermometer
 
 - platform: mqtt
@@ -24,7 +24,7 @@
   state_topic: !secret ruuvi_arbetsrum
   name: 'Arbetsrum Temperatur'
   unit_of_measurement: "°C"
-  value_template: '{{ value_json.temperature }}'
+  value_template: '{{ value_json.temperature | round(1) }}'
   icon: mdi:thermometer
 
 - platform: mqtt
@@ -45,7 +45,7 @@
   state_topic: !secret ruuvi_grovkok
   name: 'Grovkök Temperatur'
   unit_of_measurement: "°C"
-  value_template: '{{ value_json.temperature }}'
+  value_template: '{{ value_json.temperature | round(1) }}'
   icon: mdi:thermometer
 
 - platform: mqtt

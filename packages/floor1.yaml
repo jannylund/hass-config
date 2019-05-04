@@ -1,0 +1,59 @@
+group:
+  floor1:
+    name: Nedre plan
+    view: true
+    entities:
+      - group.korridor
+      - group.grovkok
+      - group.arbetsrum
+      - group.kok
+
+  kok:
+    name: Kök
+    control: hidden
+    entities:
+      - sensor.cozify_moisture_temperature
+
+  korridor:
+    name: Korridor
+    control: hidden
+    entities:
+      - binary_sensor.korridor_motion
+      - sensor.korridor_light_level_x
+      - sensor.korridor_temperature_x
+
+  grovkok:
+    name: Grovkök
+    control: hidden
+    entities:
+      - sensor.grovkok_temperatur
+      - sensor.grovkok_luftfuktighet
+      - sensor.grovkok_lufttryck
+
+  arbetsrum:
+    name: Arbetsrum
+    control: hidden
+    entities:
+      - sensor.arbetsrum_temperatur
+      - sensor.arbetsrum_luftfuktighet
+      - sensor.arbetsrum_lufttryck
+
+homeassistant:
+  customize:
+    sensor.korridor_light_level:
+      hidden: true
+    sensor.korridor_temperature:
+      hidden: true
+
+sensor:
+  # Fix the hue sensors rounding.
+  - platform: template
+    sensors:
+      korridor_light_level_x:
+        friendly_name: 'Korridor Ljusnivå'
+        unit_of_measurement: 'lx'
+        value_template: '{{ states("sensor.korridor_light_level") | round(1) }}'
+      korridor_temperature_x:
+        friendly_name: 'Korridor Temperatur'
+        unit_of_measurement: '°C'
+        value_template: '{{ states("sensor.korridor_temperature") | round(1) }}'

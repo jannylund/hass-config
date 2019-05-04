@@ -1,0 +1,50 @@
+group:
+  default_view:
+    name: Övre plan
+    view: true
+    entities:
+      - group.sovrum
+      - group.linn
+      - group.alex
+
+  sovrum:
+    control: hidden
+    name: Sovrum
+    entities:
+      - sensor.sovrum_temperatur
+      - sensor.sovrum_luftfuktighet
+      - sensor.sovrum_lufttryck
+
+  linn:
+    control: hidden
+    name: Linns rum
+    entities:
+      - sensor.cozify_motion_temperature
+
+  alex:
+    control: hidden
+    name: Alex rum
+    entities:
+      - binary_sensor.hue_motion_sensor_1_motion
+      - sensor.hue_motion_sensor_1_light_level_x
+      - sensor.hue_motion_sensor_1_temperature_x
+
+homeassistant:
+  customize:
+    sensor.hue_motion_sensor_1_light_level:
+      hidden: true
+    sensor.hue_motion_sensor_1_temperature:
+      hidden: true
+
+sensor:
+  # Fix the hue sensors rounding.
+  - platform: template
+    sensors:
+      hue_motion_sensor_1_light_level_x:
+        friendly_name: 'Alex rum Ljusnivå'
+        unit_of_measurement: 'lx'
+        value_template: '{{ states("sensor.hue_motion_sensor_1_light_level") | round(1) }}'
+      hue_motion_sensor_1_temperature_x:
+        friendly_name: 'Alex rum Temperatur'
+        unit_of_measurement: '°C'
+        value_template: '{{ states("sensor.hue_motion_sensor_1_temperature") | round(1) }}'      

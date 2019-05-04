@@ -1,0 +1,157 @@
+# Simply a battery information page.
+group:
+  batt:
+    name: Batterier
+    view: true
+    entities:
+      - group.batteries
+
+  batteries:
+    name: Batterier
+    control: hidden
+    view: false
+    entities:
+      - sensor.ruuvi_bedroom_battery
+      - sensor.ruuvi_office_battery
+      - sensor.ruuvi_grovkok_battery
+      - sensor.hue_motion_alex_battery
+      - sensor.hue_motion_korridor_battery
+      - sensor.cozify_moisture_battery
+      - sensor.cozify_motion_battery
+
+# Ruuvi sensors send battery as mV. Max is around 3200mV and min is around 1800mV.
+# To convert to percentage, use: '{{ ((value_json.battery - 1800) / 13) | int }}'
+sensor:
+  # Ruuvi 1: master bedroom.
+  - platform: mqtt
+    state_topic: !secret ruuvi_sovrum
+    name: ruuvi_bedroom_battery_raw
+    value_template: '{{ ((value_json.battery - 1800) / 13) | int }}'
+  - platform: template
+    sensors:
+      ruuvi_bedroom_battery:
+        friendly_name: 'Ruuvi sovrum batterinivå'
+        unit_of_measurement: '%'
+        value_template: '{{ states("sensor.ruuvi_bedroom_battery_raw") }}'
+        icon_template: >
+          {% set battery_round = states("sensor.ruuvi_bedroom_battery_raw") | round(-1) | int %}
+          {% if battery_round >= 10 %}
+            mdi:battery-{{ battery_round }}
+          {% else %}
+            mdi:battery-outline
+          {% endif %}
+
+  # Ruuvi 2: office.
+  - platform: mqtt
+    state_topic: !secret ruuvi_arbetsrum
+    name: ruuvi_office_battery_raw
+    value_template: '{{ ((value_json.battery - 1800) / 13) | int }}'
+  - platform: template
+    sensors:
+      ruuvi_office_battery:
+        friendly_name: 'Ruuvi arbetsrum batterinivå'
+        unit_of_measurement: '%'
+        value_template: '{{ states("sensor.ruuvi_office_battery_raw") }}'
+        icon_template: >
+          {% set battery_round = states("sensor.ruuvi_office_battery_raw") | round(-1) | int %}
+          {% if battery_round >= 10 %}
+            mdi:battery-{{ battery_round }}
+          {% else %}
+            mdi:battery-outline
+          {% endif %}
+
+  # Ruuvi 3: Grovkök
+  - platform: mqtt
+    state_topic: !secret ruuvi_grovkok
+    name: ruuvi_grovkok_battery_raw
+    value_template: '{{ ((value_json.battery - 1800) / 13) | int }}'
+  - platform: template
+    sensors:
+      ruuvi_grovkok_battery:
+        friendly_name: 'Ruuvi grovkök batterinivå'
+        unit_of_measurement: '%'
+        value_template: '{{ states("sensor.ruuvi_grovkok_battery_raw") }}'
+        icon_template: >
+          {% set battery_round = states("sensor.ruuvi_grovkok_battery_raw") | round(-1) | int %}
+          {% if battery_round >= 10 %}
+            mdi:battery-{{ battery_round }}
+          {% else %}
+            mdi:battery-outline
+          {% endif %}
+
+  # Hue motion sensor Alex rum.
+  - platform: template
+    sensors:
+      hue_motion_alex_battery:
+        friendly_name: 'Alex rörelsesensor batterinivå'
+        unit_of_measurement: '%'
+        value_template: '{{ state_attr("binary_sensor.hue_motion_sensor_1_motion", "battery_level") }}'
+        icon_template: >
+          {% set battery_round = state_attr("binary_sensor.hue_motion_sensor_1_motion", "battery_level") | round(-1) | int %}
+          {% if battery_round >= 100 %}
+            mdi:battery
+          {% elif battery_round >= 10 %}
+            mdi:battery-{{ battery_round }}
+          {% else %}
+            mdi:battery-outline
+          {% endif %}
+
+  - platform: template
+    sensors:
+      hue_motion_korridor_battery:
+        friendly_name: 'Korridor rörelsesensor batterinivå'
+        unit_of_measurement: '%'
+        value_template: '{{ state_attr("binary_sensor.korridor_motion", "battery_level") }}'
+        icon_template: >
+          {% set battery_round = state_attr("binary_sensor.korridor_motion", "battery_level") | round(-1) | int %}
+          {% if battery_round >= 100 %}
+            mdi:battery
+          {% elif battery_round >= 10 %}
+            mdi:battery-{{ battery_round }}
+          {% else %}
+            mdi:battery-outline
+          {% endif %}
+
+  # Cozify Moisture sensor.
+  - platform: mqtt
+    state_topic: !secret cozify_moisture
+    name: cozify_moisture_battery_raw
+    value_template: '{{ value_json.state.batteryV }}'
+  - platform: mqtt
+    state_topic: !secret cozify_moisture
+    name: cozify_moisture_batterylow_raw
+    value_template: '{{ value_json.state.batteryLow }}'    
+  - platform: template
+    sensors:
+      cozify_moisture_battery:
+        friendly_name: 'Cozify fuktsensor batterinivå'
+        unit_of_measurement: 'V'
+        value_template: '{{ states("sensor.cozify_moisture_battery_raw") }}'
+        icon_template: >
+          {% if states("sensor.cozify_moisture_batterylow_raw") == "False" %}
+            mdi:battery
+          {% else %}
+            mdi:battery-outline
+          {% endif %}
+
+  # Cozify Motion sensor.
+  - platform: mqtt
+    state_topic: !secret cozify_motion
+    name: cozify_motion_battery_raw
+    value_template: '{{ value_json.state.batteryV }}'
+  - platform: mqtt
+    state_topic: !secret cozify_moisture
+    name: cozify_motion_batterylow_raw
+    value_template: '{{ value_json.state.batteryLow }}'    
+  - platform: template
+    sensors:
+      cozify_motion_battery:
+        friendly_name: 'Linns rörelsesensor batterinivå'
+        unit_of_measurement: 'V'
+        value_template: '{{ states("sensor.cozify_motion_battery_raw") }}'
+        icon_template: >
+          {% if states("sensor.cozify_motion_batterylow_raw") == "False" %}
+            mdi:battery
+          {% else %}
+            mdi:battery-outline
+          {% endif %}    
