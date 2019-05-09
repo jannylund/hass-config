@@ -58,7 +58,7 @@ group:
     control: hidden
     name: Gardena
     entities:
-      #- sensor.gardena_temperatur
+      - sensor.gardena_temperatur
       - sensor.gardena_luftfuktighet
       - sensor.gardena_total_kortid
       - sensor.gardena_mode

@@ -5,6 +5,7 @@
   unit_of_measurement: "°C"
   value_template: '{{ value_json.temperature | round(1) }}'
   icon: mdi:thermometer
+  expire_after: !secret mqtt_timeout
 
 - platform: mqtt
   state_topic: !secret ruuvi_sovrum
@@ -12,6 +13,7 @@
   unit_of_measurement: "%"
   value_template: '{{ value_json.humidity }}'
   icon: mdi:water-percent
+  expire_after: !secret mqtt_timeout
 
 - platform: mqtt
   state_topic: !secret ruuvi_sovrum
@@ -19,6 +21,7 @@
   unit_of_measurement: "hPa"
   value_template: '{{ value_json.pressure }}'
   icon: mdi:nature
+  expire_after: !secret mqtt_timeout  
 
 - platform: mqtt
   state_topic: !secret ruuvi_arbetsrum
@@ -26,6 +29,7 @@
   unit_of_measurement: "°C"
   value_template: '{{ value_json.temperature | round(1) }}'
   icon: mdi:thermometer
+  expire_after: !secret mqtt_timeout  
 
 - platform: mqtt
   state_topic: !secret ruuvi_arbetsrum
@@ -33,6 +37,7 @@
   unit_of_measurement: "%"
   value_template: '{{ value_json.humidity }}'
   icon: mdi:water-percent
+  expire_after: !secret mqtt_timeout  
 
 - platform: mqtt
   state_topic: !secret ruuvi_arbetsrum
@@ -40,6 +45,7 @@
   unit_of_measurement: "hPa"
   value_template: '{{ value_json.pressure }}'
   icon: mdi:nature
+  expire_after: !secret mqtt_timeout  
 
 - platform: mqtt
   state_topic: !secret ruuvi_grovkok
@@ -47,6 +53,7 @@
   unit_of_measurement: "°C"
   value_template: '{{ value_json.temperature | round(1) }}'
   icon: mdi:thermometer
+  expire_after: !secret mqtt_timeout  
 
 - platform: mqtt
   state_topic: !secret ruuvi_grovkok
@@ -54,6 +61,7 @@
   unit_of_measurement: "%"
   value_template: '{{ value_json.humidity }}'
   icon: mdi:water-percent
+  expire_after: !secret mqtt_timeout  
 
 - platform: mqtt
   state_topic: !secret ruuvi_grovkok
@@ -61,3 +69,4 @@
   unit_of_measurement: "hPa"
   value_template: '{{ value_json.pressure }}'
   icon: mdi:nature
+  expire_after: !secret mqtt_timeout  

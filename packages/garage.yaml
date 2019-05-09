@@ -52,3 +52,4 @@ sensor:
     unit_of_measurement: "°C"
     icon: mdi:thermometer
     value_template: "{{ value_json['DS18B20'].Temperature }}"
+    expire_after: !secret mqtt_timeout    

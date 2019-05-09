@@ -1,10 +1,10 @@
-#- platform: mqtt
-#  state_topic: /robonect/health/climate/temperature
-#  name: 'Gardena Temperatur'
-#  unit_of_measurement: "°C"
-#  # Some corrupt info in the temp value.
-#  value_template: '{{ value.split(" ")[0] | int }}'
-#  icon: mdi:thermometer
+- platform: mqtt
+  state_topic: /robonect/health/climate/temperature
+  name: 'Gardena Temperatur'
+  unit_of_measurement: "°C"
+  value_template: '{{ value.split(" ")[0] | int }}'
+  icon: mdi:thermometer
+  expire_after: !secret mqtt_timeout  
 
 - platform: mqtt
   state_topic: /robonect/health/climate/humidity
@@ -12,17 +12,20 @@
   unit_of_measurement: "%"
   value_template: '{{ value.split(" ")[0] | int }}'
   icon: mdi:water-percent
+  expire_after: !secret mqtt_timeout  
 
 - platform: mqtt
   state_topic: /robonect/mower/statistic/hours
   name: "Gardena Total Körtid"
   unit_of_measurement: 'h'
   icon: mdi:calendar-clock
+  expire_after: !secret mqtt_timeout  
 
 - platform: mqtt
   state_topic: /robonect/mower/battery/charge
   name: "gardena_battery_charge_raw"
   value_template: '{{ value.split(" ")[0] }}'
+  expire_after: !secret mqtt_timeout
 
 
 - platform: template
@@ -45,15 +48,17 @@
   unit_of_measurement: 'V'
   value_template: '{{ value.split(" ")[0] | float }}'
   icon: mdi:car-battery
+  expire_after: !secret mqtt_timeout  
 
 - platform: mqtt
   state_topic: /robonect/mower/mode
   name: "Gardena Mode"
+  expire_after: !secret mqtt_timeout
 
 - platform: mqtt
   state_topic: /robonect/mower/status
   name: "gardena_status_raw"
-  icon: mdi:timer-sand
+  expire_after: !secret mqtt_timeout  
 
 - platform: mqtt
   state_topic: /robonect/wlan/rssi
@@ -61,6 +66,7 @@
   unit_of_measurement: 'dBm'
   value_template: '{{ value.split(" ")[0] | int }}'
   icon: mdi:wifi
+  expire_after: !secret mqtt_timeout
 
 - platform: mqtt
   state_topic: /robonect/mower/status/duration
@@ -68,6 +74,7 @@
   unit_of_measurement: 'min'
   value_template: '{{ value.split(" ")[0] | int }}'
   icon: mdi:timelapse
+  expire_after: !secret mqtt_timeout
 
 - platform: template
   sensors:

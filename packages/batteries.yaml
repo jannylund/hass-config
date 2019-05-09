@@ -27,6 +27,7 @@ sensor:
     state_topic: !secret ruuvi_sovrum
     name: ruuvi_bedroom_battery_raw
     value_template: '{{ ((value_json.battery - 1800) / 13) | int }}'
+    expire_after: !secret mqtt_timeout    
   - platform: template
     sensors:
       ruuvi_bedroom_battery:
@@ -46,6 +47,7 @@ sensor:
     state_topic: !secret ruuvi_arbetsrum
     name: ruuvi_office_battery_raw
     value_template: '{{ ((value_json.battery - 1800) / 13) | int }}'
+    expire_after: !secret mqtt_timeout
   - platform: template
     sensors:
       ruuvi_office_battery:
@@ -65,6 +67,7 @@ sensor:
     state_topic: !secret ruuvi_grovkok
     name: ruuvi_grovkok_battery_raw
     value_template: '{{ ((value_json.battery - 1800) / 13) | int }}'
+    expire_after: !secret mqtt_timeout    
   - platform: template
     sensors:
       ruuvi_grovkok_battery:
@@ -117,10 +120,12 @@ sensor:
     state_topic: !secret cozify_moisture
     name: cozify_moisture_battery_raw
     value_template: '{{ value_json.state.batteryV }}'
+    expire_after: !secret mqtt_timeout    
   - platform: mqtt
     state_topic: !secret cozify_moisture
     name: cozify_moisture_batterylow_raw
     value_template: '{{ value_json.state.batteryLow }}'    
+    expire_after: !secret mqtt_timeout    
   - platform: template
     sensors:
       cozify_moisture_battery:
@@ -139,10 +144,12 @@ sensor:
     state_topic: !secret cozify_motion
     name: cozify_motion_battery_raw
     value_template: '{{ value_json.state.batteryV }}'
+    expire_after: !secret mqtt_timeout    
   - platform: mqtt
     state_topic: !secret cozify_moisture
     name: cozify_motion_batterylow_raw
     value_template: '{{ value_json.state.batteryLow }}'    
+    expire_after: !secret mqtt_timeout    
   - platform: template
     sensors:
       cozify_motion_battery:
@@ -154,4 +161,4 @@ sensor:
             mdi:battery
           {% else %}
             mdi:battery-outline
-          {% endif %}    
+          {% endif %}
