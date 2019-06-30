@@ -1,0 +1,81 @@
+# Robot notifications and automation.
+automation:
+  - alias: 'Robot mowing around house'
+    trigger:
+      platform: state
+      entity_id: sensor.gardena_status_raw
+      to: '2'
+    condition:
+      condition: state
+      entity_id: switch.robot_area_cmd
+      state: 'on'
+    action:
+      service: notify.slack_notify
+      data:
+        message: "Gardena klipper runt huset"
+  - alias: 'Robot mowing around garage'
+    trigger:
+      platform: state
+      entity_id: sensor.gardena_status_raw
+      to: '2'
+    condition:
+      condition: state
+      entity_id: switch.robot_area_cmd
+      state: 'off'
+    action:
+      service: notify.slack_notify
+      data:
+        message: "Gardena klipper runt garaget"
+
+  - alias: 'Robot parked'
+    trigger:
+      platform: state
+      entity_id: sensor.gardena_status_raw
+      to: '1'
+    action:
+      service: notify.slack_notify
+      data:
+        message: "Gardena har parkerat"
+
+  # Automatically toggle area when charging.
+  - alias: 'Robot charging'
+    trigger:
+      platform: state
+      entity_id: sensor.gardena_status_raw
+      to: '4'
+    action:
+      - service: notify.slack_notify
+        data:
+          message: "Gardena laddar"
+      - service: homeassistant.toggle
+        entity_id: switch.robot_area_cmd
+
+  - alias: 'Robot error'
+    trigger:
+      platform: state
+      entity_id: sensor.gardena_status_raw
+      to: '7'
+    action:
+      service: notify.slack_notify
+      data:
+        message: "Gardena har problem!"
+
+  - alias: 'Robot area garage'
+    trigger:
+      platform: state
+      entity_id: switch.robot_area_cmd
+      to: 'off'
+    action:
+      service: notify.slack_notify
+      data:
+        message: "Gardena område satt till garage!"
+
+  - alias: 'Robot area garage'
+    trigger:
+      platform: state
+      entity_id: switch.robot_area_cmd
+      to: 'on'
+    action:
+      service: notify.slack_notify
+      data:
+        message: "Gardena område satt till hus!"
