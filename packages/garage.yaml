@@ -6,6 +6,7 @@ group:
       - light.sonoff_garage_lights
       - sensor.sonoff_garage_temperature
       - sensor.utomhus_temperatur
+      - switch.robot_area_cmd
 
 homeassistant:
   customize:
@@ -52,4 +53,14 @@ sensor:
     unit_of_measurement: "°C"
     icon: mdi:thermometer
     value_template: "{{ value_json['DS18B20'].Temperature }}"
-    expire_after: !secret mqtt_timeout    
+    expire_after: !secret mqtt_timeout
+
+switch:
+  - platform: command_line
+    switches:
+      robot_area_cmd:
+        command_on: '/usr/bin/curl -X GET http://10.0.1.62/control\?cmd\=gpio,5,1'
+        command_off: '/usr/bin/curl -X GET http://10.0.1.62/control\?cmd\=gpio,5,0'
+        command_state: '/usr/bin/curl -X GET http://10.0.1.62/json'
+        value_template: '{{ value_json["Sensors"][2]["robotarea"] == 1 }}'
+        friendly_name: "Robot Area (1 == runt hus, 0 == runt garage)"
