@@ -1,31 +1,3 @@
-# entity_id for mqtt is a normalized version of name. no åäö and _ instead if blankspace.
-#- platform: mqtt
-#  state_topic: !secret ruuvi_sovrum
-#  name: 'Sovrum Temperatur'
-#  unit_of_measurement: "°C"
-#  value_template: '{{ value_json.temperature | round(1) }}'
-#  icon: mdi:thermometer
-#  expire_after: !secret mqtt_timeout
-#  force_update: true#
-
-#- platform: mqtt
-#  state_topic: !secret ruuvi_sovrum
-#  name: 'Sovrum Luftfuktighet'
-#  unit_of_measurement: "%"
-#  value_template: '{{ value_json.humidity }}'
-#  icon: mdi:water-percent
-#  expire_after: !secret mqtt_timeout
-#  force_update: true  #
-
-#- platform: mqtt
-#  state_topic: !secret ruuvi_sovrum
-#  name: 'Sovrum Lufttryck'
-#  unit_of_measurement: "hPa"
-#  value_template: '{{ value_json.pressure }}'
-#  icon: mdi:nature
-#  expire_after: !secret mqtt_timeout  
-#  force_update: true
-
 - platform: mqtt
   state_topic: !secret ruuvi_garage
   name: 'Ruuvi Garage Temperatur'
@@ -81,33 +53,6 @@
   expire_after: !secret mqtt_timeout  
   force_update: true
 
-#- platform: mqtt
-#  state_topic: !secret ruuvi_aula
-#  name: 'Aula Temperatur'
-#  unit_of_measurement: "°C"
-#  value_template: '{{ value_json.temperature | round(1) }}'
-#  icon: mdi:thermometer
-#  expire_after: !secret mqtt_timeout  
-#  force_update: true#
-
-#- platform: mqtt
-#  state_topic: !secret ruuvi_aula
-#  name: 'Aula Luftfuktighet'
-#  unit_of_measurement: "%"
-#  value_template: '{{ value_json.humidity }}'
-#  icon: mdi:water-percent
-#  expire_after: !secret mqtt_timeout  
-#  force_update: true#
-
-#- platform: mqtt
-#  state_topic: !secret ruuvi_aula
-#  name: 'Aula Lufttryck'
-#  unit_of_measurement: "hPa"
-#  value_template: '{{ value_json.pressure }}'
-#  icon: mdi:nature
-#  expire_after: !secret mqtt_timeout  
-#  force_update: true  
-
 - platform: mqtt
   state_topic: !secret ruuvi_utomhus
   name: 'Ruuvi Utomhus Temperatur'
@@ -134,7 +79,6 @@
   icon: mdi:nature
   expire_after: !secret mqtt_timeout  
   force_update: true  
-
 
 - platform: thermal_comfort
   sensors:
