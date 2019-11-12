@@ -1,8 +1,0 @@
-- platform: mqtt
-  state_topic: !secret robot_utomhus_temperatur
-  name: 'Utomhus temperatur'
-  unit_of_measurement: "°C"
-  icon: mdi:thermometer
-  value_template: "{{ value | round(1) }}"
-  expire_after: !secret mqtt_timeout  
-  force_update: true

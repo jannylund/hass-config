@@ -276,7 +276,6 @@ views:
         type: entities
       - entities:
           - light.sonoff_garage_lights
-          - sensor.utomhus_temperatur
           - switch.robot_area_cmd
           - sensor.sonoff_garage_temperature
           - switch.sonoff_garagefan
