@@ -79,3 +79,126 @@ automation:
       service: notify.slack_notify
       data:
         message: "Gardena område satt till hus!"
+
+
+sensor:
+  - platform: mqtt
+    state_topic: /robonect/health/climate/temperature
+    name: 'Gardena Temperatur'
+    unit_of_measurement: "°C"
+    icon: mdi:thermometer
+    force_update: true
+
+  - platform: mqtt
+    state_topic: /robonect/health/climate/humidity
+    name: 'Gardena Luftfuktighet'
+    unit_of_measurement: "%"
+    icon: mdi:water-percent
+    force_update: true
+
+  - platform: mqtt
+    state_topic: /robonect/mower/statistic/hours
+    name: "Gardena Total Körtid"
+    unit_of_measurement: 'h'
+    icon: mdi:calendar-clock
+    force_update: true
+
+  - platform: mqtt
+    state_topic: /robonect/mower/battery/charge
+    name: "gardena_battery_charge_raw"
+    force_update: true
+
+  - platform: template
+    sensors:
+      gardena_batteriniva:
+        friendly_name: "Gardena Batterinivå"
+        unit_of_measurement: '%'
+        value_template: '{{ states("sensor.gardena_battery_charge_raw") }}'
+        icon_template: >
+          {% set battery_round = states("sensor.gardena_battery_charge_raw") | round(-1) | int %}
+          {% if battery_round >= 10 %}
+            mdi:battery-charging-{{ battery_round }}
+          {% else %}
+            mdi:battery-charging-outline
+          {% endif %}
+
+  - platform: mqtt
+    state_topic: /robonect/health/voltage/batt
+    name: "Gardena Spänning"
+    unit_of_measurement: 'V'
+    icon: mdi:car-battery
+    expire_after: 1200
+    force_update: true
+
+  - platform: mqtt
+    state_topic: /robonect/mower/mode
+    name: "Gardena Mode"
+    force_update: true
+
+  - platform: mqtt
+    state_topic: /robonect/mower/status
+    name: "gardena_status_raw"
+    force_update: true
+
+  - platform: mqtt
+    state_topic: /robonect/wlan/rssi
+    name: "Gardena Wifi signal"
+    unit_of_measurement: 'dBm'
+    icon: mdi:wifi
+    expire_after: 1200
+    force_update: true
+
+  - platform: mqtt
+    state_topic: /robonect/mower/status/duration
+    name: "Tid i status"
+    unit_of_measurement: 'min'
+    icon: mdi:timelapse
+    expire_after: 1200
+    force_update: true
+
+  - platform: template
+    sensors:
+      gardena_status_friendly:
+        friendly_name: "Status"
+        value_template: >
+          {% if is_state("sensor.gardena_status_raw", "0") -%}
+            Kontrollerar status
+          {% elif is_state("sensor.gardena_status_raw", "1") -%}
+            Parkerad
+          {% elif is_state("sensor.gardena_status_raw", "2") -%}
+            Klipper
+          {% elif is_state("sensor.gardena_status_raw", "3") -%}
+            Söker laddningsstation
+          {% elif is_state("sensor.gardena_status_raw", "4") -%}
+            Laddar
+          {% elif is_state("sensor.gardena_status_raw", "5") -%}
+            Söker
+          {% elif is_state("sensor.gardena_status_raw", "7") -%}
+            Error
+          {% elif is_state("sensor.gardena_status_raw", "16") -%}
+            Off
+          {% elif is_state("sensor.gardena_status_raw", "17") -%}
+            Sover
+          {% else -%}
+            Förvirrad, vad betyder status {{ states("sensor.gardena_status_raw") }} ???
+          {%- endif %}
+        icon_template: >
+          {% if is_state("sensor.gardena_status_raw", "1") -%}
+            mdi:parking
+          {% elif is_state("sensor.gardena_status_raw", "2") -%}
+            mdi:scissors-cutting
+          {% elif is_state("sensor.gardena_status_raw", "3") -%}
+            mdi:image-search
+          {% elif is_state("sensor.gardena_status_raw", "4") -%}
+            mdi:ev-station
+          {% elif is_state("sensor.gardena_status_raw", "5") -%}
+            mdi:image-search
+          {% elif is_state("sensor.gardena_status_raw", "7") -%}
+            mdi:alert-circle-outline
+          {% elif is_state("sensor.gardena_status_raw", "16") -%}
+            mdi:power-plug-off
+          {% elif is_state("sensor.gardena_status_raw", "17") -%}
+            mdi:sleep
+          {% else -%}
+            mdi:help
+          {%- endif %}
