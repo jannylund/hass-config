@@ -5,7 +5,6 @@ homeassistant:
     sensor.sonoff_garage_temperature:
       friendly_name: "Garage temperatur"
 
-# This forces the sonoff to expose power state on HA startup, to avoid being out of sync.
 automation:
   - alias: "Power state on HA start-up"
     trigger:
@@ -62,8 +61,6 @@ automation:
       - service: homeassistant.turn_off
         entity_id: light.sonoff_garage_lights
 
-
-# Garage fan
 light:
   - platform: mqtt
     name: sonoff_garage_lights
@@ -88,14 +85,3 @@ sensor:
     value_template: "{{ value_json['DS18B20'].Temperature }}"
     expire_after: !secret mqtt_timeout
     force_update: true
-
-# Robot area switch.
-switch:
-  - platform: command_line
-    switches:
-      robot_area_cmd:
-        command_on: '/usr/bin/curl -X GET http://10.0.1.62/control\?cmd\=gpio,5,1'
-        command_off: '/usr/bin/curl -X GET http://10.0.1.62/control\?cmd\=gpio,5,0'
-        command_state: '/usr/bin/curl -X GET http://10.0.1.62/json'
-        value_template: '{{ value_json["Sensors"][2]["robotarea"] == 1 }}'
-        friendly_name: "Robot Area (1 == runt hus, 0 == runt garage)"
