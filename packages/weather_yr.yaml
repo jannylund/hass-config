@@ -1,0 +1,19 @@
+# Temperature from YR is more correct than darksky.
+homeassistant:
+  customize:
+    sensor.yr_temperature:
+      friendly_name: Temperatur
+    sensor.yr_humidity:
+      friendly_name: Luftfuktighet
+
+sensor:
+  - platform: yr
+    monitored_conditions:
+      - temperature 
+      - humidity 
+  # Calculate absolute humidity
+  - platform: thermal_comfort
+    sensors:
+      outside_thermal:
+        temperature_sensor: sensor.yr_temperature
+        humidity_sensor: sensor.yr_humidity

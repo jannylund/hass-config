@@ -13,6 +13,7 @@ sensor:
     value_template: '{{ value_json.state.temperature | round(1) }}'
     icon: mdi:thermometer
     expire_after: !secret mqtt_timeout    
+    force_update: true    
 
   - platform: mqtt
     state_topic: !secret cozify_motion
@@ -21,3 +22,4 @@ sensor:
     value_template: '{{ value_json.state.temperature | round(1) }}'
     icon: mdi:thermometer
     expire_after: !secret mqtt_timeout    
+    force_update: true

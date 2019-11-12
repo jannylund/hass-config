@@ -1,0 +1,7 @@
+# Fungerar inte med F31 2014.
+# https://www.home-assistant.io/integrations/bmw_connected_drive/
+#bmw_connected_drive:
+#  320d:
+#    username: !secret bmw_username
+#    password: !secret bmw_password
+#    region: "rest_of_world"

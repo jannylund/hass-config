@@ -1,0 +1,301 @@
+title: Bergholmsvägen 12
+
+resources:
+  - url: /local/mini-graph-card-bundle.js?v=0.8.2
+    type: module
+
+views:
+  - path: overview
+    title: Overview
+    cards:
+      - type: custom:mini-graph-card
+        hour24: true
+        entities:
+          - sensor.hue_motion_sensor_1_temperature_x
+        show:
+          labels: true
+          extrema: true
+          average: true
+        color_thresholds:
+          - value: 20.1
+            color: !secret color_normal            
+          - value: 20
+            color: !secret color_cold
+        name: Alex rum
+        hours_to_show: 24
+        points_per_hour: 1
+      - type: custom:mini-graph-card
+        hour24: true
+        entities:
+          - sensor.cozify_motion_temperature
+        show:
+          labels: true
+          extrema: true
+          average: true
+        color_thresholds:
+          - value: 20.1
+            color: !secret color_normal            
+          - value: 20
+            color: !secret color_cold
+        name: Linns rum
+        hours_to_show: 24
+        points_per_hour: 1
+      - type: custom:mini-graph-card
+        name: Frysen
+        hour24: true
+        entities:
+          - sensor.frys_temperatur
+        show:
+          labels: true
+          extrema: true
+          average: true
+        color_thresholds:
+          - value: -17.9
+            color: !secret color_warm
+          - value: -18
+            color: !secret color_cold
+        hours_to_show: 24
+        points_per_hour: 1
+      - type: custom:mini-graph-card
+        name: Utomhus
+        hour24: true
+        entities:
+          - sensor.ruuvi_utomhus_temperatur
+        show:
+          labels: true
+          extrema: true
+          average: true
+        color_thresholds:
+          - value: 20
+            color: !secret color_warm
+          - value: 10
+            color: !secret color_cold
+        hours_to_show: 24
+        points_per_hour: 1
+      - type: custom:mini-graph-card
+        hour24: true
+        entities:
+          - sensor.korridor_temperature_x
+        show:
+          labels: true
+          extrema: true
+          average: true
+        color_thresholds:
+          - value: 20.1
+            color: !secret color_normal            
+          - value: 20
+            color: !secret color_cold
+        name: Korridor
+        hours_to_show: 24
+        points_per_hour: 1
+      - type: custom:mini-graph-card
+        hour24: true
+        entities:
+          - sensor.ruuvi_utomhus_luftfuktighet
+        show:
+          labels: true
+          extrema: true
+          average: true
+        color_thresholds:
+          - value: 61
+            color: !secret color_warm
+          - value: 60
+            color: !secret color_normal
+          - value: 41
+            color: !secret color_normal    
+          - value: 40
+            color: !secret color_cold
+        name: Utomhus luftfuktighet
+        hours_to_show: 24
+        points_per_hour: 1
+
+
+  - path: garage
+    title: Garage
+    cards:
+      - entity: sensor.garage_floorheating_today
+        type: sensor
+        name: Värmetid idag
+      - entity: sensor.garage_floorheating_cost_today
+        type: sensor
+        name: Värmekostnad idag
+      - entity: sensor.garage_floorheating_cost_yesterday
+        type: sensor
+        name: Värmekostnad igår
+      - entity: sensor.garage_floorheating_cost_all_time
+        type: sensor
+        name: Värmekostnad totalt
+      - type: thermostat
+        entity: climate.garage_floorheating
+        name: Golvvärme
+      - entity: switch.sonoff_garagefan
+        type: entity-button
+        name: Fläkt
+      - type: custom:mini-graph-card
+        hour24: true
+        entities:
+          - sensor.ruuvi_garage_temperatur
+        show:
+          labels: true
+          extrema: true
+          average: true
+        color_thresholds:
+          - value: 10
+            color: !secret color_normal
+          - value: 6
+            color: !secret color_cold
+        name: Garage Lufttemperatur
+        hours_to_show: 48
+        points_per_hour: 1
+      - type: custom:mini-graph-card
+        hour24: true
+        entities:
+          - sensor.garage_floorheating_current_temperature
+        show:
+          labels: true
+          extrema: true
+          average: true
+        color_thresholds:
+          - value: 10.1
+            color: !secret color_normal
+          - value: 10
+            color: !secret color_cold
+        name: Garage Golvtemperatur
+        hours_to_show: 48
+        points_per_hour: 1
+      - type: custom:mini-graph-card
+        hour24: true
+        entities:
+          - sensor.ruuvi_garage_luftfuktighet
+        show:
+          labels: true
+          extrema: true
+          average: true
+        color_thresholds:
+          - value: 55
+            color: !secret color_warm
+          - value: 55
+            color: !secret color_normal
+        name: Garage Luftfuktighet
+        hours_to_show: 48
+        points_per_hour: 1
+
+# Config för garagevyn.
+  - title: Garage2
+    path: garage2
+    cards:
+      - type: markdown
+        content: >
+          ## Utomhus yr.no
+      - type: vertical-stack
+        cards:
+        - type: horizontal-stack
+          cards:
+          - entity: sensor.yr_temperature
+            graph: line
+            type: sensor
+          - entity: sensor.yr_humidity
+            graph: line
+            icon: mdi:water-percent
+            type: sensor
+          - entity: sensor.outside_thermal_absolutehumidity
+            graph: line
+            icon: mdi:water-percent
+            type: sensor
+            name: Absolut fuktighet
+        - type: horizontal-stack
+          cards:
+          - type: markdown
+            content: >
+              ## Utomhus Ruuvi
+        - type: horizontal-stack
+          cards:              
+          - entity: sensor.ruuvi_utomhus_temperatur
+            graph: line
+            type: sensor
+          - entity: sensor.ruuvi_utomhus_luftfuktighet
+            graph: line
+            icon: mdi:water-percent
+            type: sensor
+          - entity: sensor.outside_ruuvi_absolutehumidity
+            graph: line
+            icon: mdi:water-percent
+            type: sensor
+            name: Absolut fuktighet            
+
+        # RUUVI GARAGE START
+        - type: markdown
+          content: >
+            ## Garage Ruuvi
+        - type: horizontal-stack
+          cards:            
+          - entity: sensor.ruuvi_garage_temperatur
+            graph: line
+            type: sensor
+            name: Temperatur
+          - entity: sensor.ruuvi_garage_luftfuktighet
+            graph: line
+            type: sensor
+            name: Luftfuktighet
+          - entity: sensor.garage_ruuvi_absolutehumidity
+            graph: line
+            type: sensor
+            name: Absolut fuktighet
+        # RUUVI GARAGE END
+            
+  - badges: []
+    cards:
+      - entities:
+          - binary_sensor.korridor_motion
+          - sensor.korridor_light_level_x
+          - sensor.korridor_temperature_x
+        show_header_toggle: false
+        title: Korridor
+        type: entities
+      - entities:
+          - sensor.cozify_moisture_temperature
+        show_header_toggle: false
+        title: Kök
+        type: entities
+    path: floor1
+    title: Nedre plan
+  - badges: []
+    cards:
+      - entities:
+          - sensor.gardena_temperatur
+          - sensor.gardena_luftfuktighet
+          - sensor.gardena_total_kortid
+          - sensor.gardena_mode
+          - sensor.gardena_wifi_signal
+          - sensor.tid_i_status
+          - sensor.gardena_status_friendly
+          - sensor.gardena_batteriniva
+          - sensor.gardena_spanning
+        show_header_toggle: false
+        title: Gardena
+        type: entities
+      - entities:
+          - light.sonoff_garage_lights
+          - sensor.utomhus_temperatur
+          - switch.robot_area_cmd
+          - sensor.sonoff_garage_temperature
+          - switch.sonoff_garagefan
+        show_header_toggle: false
+        title: Garage
+        type: entities
+    path: utomhus
+    title: Utomhus
+  - path: batteries
+    title: Batterier
+    cards:
+      - title: Batterier
+        type: entities
+        entities:
+          - sensor.ruuvi_bedroom_battery
+          - sensor.ruuvi_freezer_battery
+          - sensor.ruuvi_aula_battery
+          - sensor.hue_motion_alex_battery
+          - sensor.hue_motion_korridor_battery
+          - sensor.cozify_moisture_battery
+          - sensor.cozify_motion_battery
+        show_header_toggle: false

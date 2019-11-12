@@ -1,0 +1,71 @@
+# Sonoff controlled garage fan.
+homeassistant:
+  customize:
+    switch.sonoff_garagefan:
+      friendly_name: "Garage fläkt"
+
+sensor:
+  - platform: thermal_comfort
+    sensors:
+      garage_thermal:
+        temperature_sensor: sensor.sonoff_garagefan_temperature
+        humidity_sensor: sensor.sonoff_garagefan_humidity
+
+automation:
+  - alias: "Check garage fan power state on HA start-up"
+    trigger:
+      platform: homeassistant
+      event: start
+    action:
+      - service: mqtt.publish
+        data:
+          topic: "/sonoff/garagefan/cmnd/POWER"
+          payload: ""
+      - service: mqtt.publish
+        data:
+          topic: "/sonoff/garagefan/cmnd/state"
+          payload: ""
+
+  - alias: 'Starta fläkten varje timme om luftfuktighet är hög och absolut luftfuktighet är lägre utomhus.'
+    trigger:
+      platform: time_pattern
+      minutes: '/30'
+    condition:
+      condition: and
+      conditions:
+        - condition: state
+          entity_id: switch.sonoff_garagefan
+          state: 'off'
+        - condition: template
+          value_template: '{{ states.sensor.ruuvi_garage_luftfuktighet.state|float > 55 }}'
+        - condition: template
+          value_template: '{{ states.sensor.garage_ruuvi_absolutehumidity.state|float > (states.sensor.outside_ruuvi_absolutehumidity.state|float)+1 }}'
+    action:
+      - service: switch.turn_on
+        entity_id: switch.sonoff_garagefan
+
+  - alias: 'Stanna alltid fläkten efter 15 minuter.'
+    trigger:
+      platform: state
+      entity_id: switch.sonoff_garagefan
+      to: 'on'
+      for:
+        minutes: 15
+    action:
+      - service: switch.turn_off
+        entity_id: switch.sonoff_garagefan
+
+switch:
+  - platform: mqtt
+    name: sonoff_garagefan
+    icon: mdi:fan
+    state_topic: "/sonoff/garagefan/stat/RESULT"
+    value_template: "{{ value_json.POWER }}"
+    command_topic: "/sonoff/garagefan/cmnd/POWER"
+    availability_topic: "/sonoff/garagefan/tele/LWT"
+    qos: 1
+    payload_on: "ON"
+    payload_off: "OFF"
+    payload_available: "Online"
+    payload_not_available: "Offline"
+    retain: false

@@ -1,72 +1,149 @@
 # entity_id for mqtt is a normalized version of name. no åäö and _ instead if blankspace.
+#- platform: mqtt
+#  state_topic: !secret ruuvi_sovrum
+#  name: 'Sovrum Temperatur'
+#  unit_of_measurement: "°C"
+#  value_template: '{{ value_json.temperature | round(1) }}'
+#  icon: mdi:thermometer
+#  expire_after: !secret mqtt_timeout
+#  force_update: true#
+
+#- platform: mqtt
+#  state_topic: !secret ruuvi_sovrum
+#  name: 'Sovrum Luftfuktighet'
+#  unit_of_measurement: "%"
+#  value_template: '{{ value_json.humidity }}'
+#  icon: mdi:water-percent
+#  expire_after: !secret mqtt_timeout
+#  force_update: true  #
+
+#- platform: mqtt
+#  state_topic: !secret ruuvi_sovrum
+#  name: 'Sovrum Lufttryck'
+#  unit_of_measurement: "hPa"
+#  value_template: '{{ value_json.pressure }}'
+#  icon: mdi:nature
+#  expire_after: !secret mqtt_timeout  
+#  force_update: true
+
 - platform: mqtt
-  state_topic: !secret ruuvi_sovrum
-  name: 'Sovrum Temperatur'
+  state_topic: !secret ruuvi_garage
+  name: 'Ruuvi Garage Temperatur'
   unit_of_measurement: "°C"
   value_template: '{{ value_json.temperature | round(1) }}'
   icon: mdi:thermometer
   expire_after: !secret mqtt_timeout
+  force_update: true
 
 - platform: mqtt
-  state_topic: !secret ruuvi_sovrum
-  name: 'Sovrum Luftfuktighet'
+  state_topic: !secret ruuvi_garage
+  name: 'Ruuvi Garage Luftfuktighet'
   unit_of_measurement: "%"
-  value_template: '{{ value_json.humidity }}'
+  value_template: '{{ value_json.humidity | round(1) }}'
   icon: mdi:water-percent
   expire_after: !secret mqtt_timeout
+  force_update: true  
 
 - platform: mqtt
-  state_topic: !secret ruuvi_sovrum
-  name: 'Sovrum Lufttryck'
+  state_topic: !secret ruuvi_garage
+  name: 'Ruuvi Garage Lufttryck'
   unit_of_measurement: "hPa"
   value_template: '{{ value_json.pressure }}'
   icon: mdi:nature
   expire_after: !secret mqtt_timeout  
+  force_update: true
+
 
 - platform: mqtt
-  state_topic: !secret ruuvi_arbetsrum
-  name: 'Arbetsrum Temperatur'
+  state_topic: !secret ruuvi_frys
+  name: 'Frys Temperatur'
   unit_of_measurement: "°C"
   value_template: '{{ value_json.temperature | round(1) }}'
   icon: mdi:thermometer
   expire_after: !secret mqtt_timeout  
+  force_update: true
 
 - platform: mqtt
-  state_topic: !secret ruuvi_arbetsrum
-  name: 'Arbetsrum Luftfuktighet'
+  state_topic: !secret ruuvi_frys
+  name: 'Frys Luftfuktighet'
   unit_of_measurement: "%"
-  value_template: '{{ value_json.humidity }}'
+  value_template: '{{ value_json.humidity | round(1) }}'
   icon: mdi:water-percent
   expire_after: !secret mqtt_timeout  
+  force_update: true
 
 - platform: mqtt
-  state_topic: !secret ruuvi_arbetsrum
-  name: 'Arbetsrum Lufttryck'
+  state_topic: !secret ruuvi_frys
+  name: 'Frys Lufttryck'
   unit_of_measurement: "hPa"
   value_template: '{{ value_json.pressure }}'
   icon: mdi:nature
   expire_after: !secret mqtt_timeout  
+  force_update: true
+
+#- platform: mqtt
+#  state_topic: !secret ruuvi_aula
+#  name: 'Aula Temperatur'
+#  unit_of_measurement: "°C"
+#  value_template: '{{ value_json.temperature | round(1) }}'
+#  icon: mdi:thermometer
+#  expire_after: !secret mqtt_timeout  
+#  force_update: true#
+
+#- platform: mqtt
+#  state_topic: !secret ruuvi_aula
+#  name: 'Aula Luftfuktighet'
+#  unit_of_measurement: "%"
+#  value_template: '{{ value_json.humidity }}'
+#  icon: mdi:water-percent
+#  expire_after: !secret mqtt_timeout  
+#  force_update: true#
+
+#- platform: mqtt
+#  state_topic: !secret ruuvi_aula
+#  name: 'Aula Lufttryck'
+#  unit_of_measurement: "hPa"
+#  value_template: '{{ value_json.pressure }}'
+#  icon: mdi:nature
+#  expire_after: !secret mqtt_timeout  
+#  force_update: true  
 
 - platform: mqtt
-  state_topic: !secret ruuvi_grovkok
-  name: 'Grovkök Temperatur'
+  state_topic: !secret ruuvi_utomhus
+  name: 'Ruuvi Utomhus Temperatur'
   unit_of_measurement: "°C"
   value_template: '{{ value_json.temperature | round(1) }}'
   icon: mdi:thermometer
   expire_after: !secret mqtt_timeout  
+  force_update: true
 
 - platform: mqtt
-  state_topic: !secret ruuvi_grovkok
-  name: 'Grovkök Luftfuktighet'
+  state_topic: !secret ruuvi_utomhus
+  name: 'Ruuvi Utomhus Luftfuktighet'
   unit_of_measurement: "%"
-  value_template: '{{ value_json.humidity }}'
+  value_template: '{{ value_json.humidity | round(1) }}'
   icon: mdi:water-percent
   expire_after: !secret mqtt_timeout  
+  force_update: true
 
 - platform: mqtt
-  state_topic: !secret ruuvi_grovkok
-  name: 'Grovkök Lufttryck'
+  state_topic: !secret ruuvi_utomhus
+  name: 'Ruuvi Utomhus Lufttryck'
   unit_of_measurement: "hPa"
   value_template: '{{ value_json.pressure }}'
   icon: mdi:nature
   expire_after: !secret mqtt_timeout  
+  force_update: true  
+
+
+- platform: thermal_comfort
+  sensors:
+    outside_ruuvi:
+      temperature_sensor: sensor.ruuvi_utomhus_temperatur
+      humidity_sensor: sensor.ruuvi_utomhus_luftfuktighet
+
+- platform: thermal_comfort
+  sensors:
+    garage_ruuvi:
+      temperature_sensor: sensor.ruuvi_garage_temperatur
+      humidity_sensor: sensor.ruuvi_garage_luftfuktighet

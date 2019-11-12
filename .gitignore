@@ -4,3 +4,4 @@ home-assistant_v2.db
 .storage/
 home-assistant.log
 secrets.yaml
+__pycache__

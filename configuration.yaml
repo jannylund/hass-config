@@ -8,15 +8,6 @@ homeassistant:
   unit_system: metric
   time_zone: Europe/Helsinki
 
-  # set view order:
-  customize:
-    group.floor1:
-      order: 1
-    group.utomhus:
-      order: 2
-    group.batterier:
-      order: 10
-
   # hide any raw signals used for calculation.
   customize_glob:
     "sensor.*_raw":
@@ -46,27 +37,15 @@ mqtt:
   username: !secret mqtt_username
   password: !secret mqtt_password
 
-group:
-  utomhus:
-    name: Utomhus
-    view: true
-    entities:
-      - group.gardena
-      - group.garage
+# new ui!
+lovelace:
+  mode: yaml
 
-  gardena:
-    control: hidden
-    name: Gardena
-    entities:
-      - sensor.gardena_temperatur
-      - sensor.gardena_luftfuktighet
-      - sensor.gardena_total_kortid
-      - sensor.gardena_mode
-      - sensor.gardena_wifi_signal
-      - sensor.tid_i_status
-      - sensor.gardena_status_friendly
-      - sensor.gardena_batteriniva
-      - sensor.gardena_spanning
+#weather:
+#  - platform: darksky
+#    api_key: dbecb74a6804d24a9a23ba2de3eed196
+#    mode: daily
+#    units: si
 
 sensor: !include_dir_merge_list sensors
 

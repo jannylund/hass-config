@@ -1,0 +1,66 @@
+# Garage floor heating thermostat from https://github.com/algirdasc/hass-components/tree/master/floureon
+climate:
+  - platform: floureon
+    host: !secret garage_thermostat_host
+    mac: !secret garage_thermostat_mac
+    name: garage_floorheating
+    use_external_temp: true # use floorsensor!
+
+# Make sensors out of them so we can trend them.
+sensor:
+  - platform: template
+    sensors:
+      garage_floorheating_target_temperature:
+        unit_of_measurement: '°C'
+        value_template: '{{ states.climate.garage_floorheating.attributes.temperature }}'
+      garage_floorheating_current_temperature:
+        unit_of_measurement: '°C'
+        value_template: '{{ states.climate.garage_floorheating.attributes.current_temperature }}'
+      garage_floorheating:
+        value_template: >
+          {% if states.climate.garage_floorheating.attributes.hvac_action == "heating" %}
+            1
+          {% else %}
+            0
+          {% endif %}
+
+  # Heating time today
+  - platform: history_stats
+    name: garage_floorheating_today
+    entity_id: sensor.garage_floorheating
+    state: 1
+    type: time
+    start: '{{ now().replace(hour=0).replace(minute=0).replace(second=0) }}'
+    end: '{{ now() }}'
+
+  # Heating time yesterday
+  - platform: history_stats
+    name: garage_floorheating_yesterday
+    entity_id: sensor.garage_floorheating
+    state: 1
+    type: time
+    end: '{{ now().replace(hour=0).replace(minute=0).replace(second=0) }}'
+    duration:
+      hours: 24
+
+  # Total heating time
+  - platform: history_stats
+    name: garage_floorheating_all_time
+    entity_id: sensor.garage_floorheating
+    state: 1
+    type: time
+    start: '{{ 0 }}'
+    end: '{{ now() }}'
+
+  # Heating cost for today, yesterday and all time
+  - platform: template
+    sensors:
+      garage_floorheating_cost_today:
+        unit_of_measurement: '€'
+        value_template: '{{ (states("sensor.garage_floorheating_today") | float * 2.3 * 0.12) | round(2) }}'
+      garage_floorheating_cost_yesterday:
+        unit_of_measurement: '€'
+        value_template: '{{ (states("sensor.garage_floorheating_yesterday") | float * 2.3 * 0.12) | round(2) }}'
+      garage_floorheating_cost_all_time:
+        unit_of_measurement: '€'
+        value_template: '{{ (states("sensor.garage_floorheating_all_time") | float * 2.3 * 0.12) | round(2) }}'

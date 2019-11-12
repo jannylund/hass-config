@@ -4,6 +4,7 @@ group:
     view: true
     entities:
       - group.sovrum
+      - group.aula
       - group.linn
       - group.alex
 
@@ -29,6 +30,14 @@ group:
       - sensor.hue_motion_sensor_1_light_level_x
       - sensor.hue_motion_sensor_1_temperature_x
 
+  aula:
+    name: Aula
+    control: hidden
+    entities:
+      - sensor.aula_temperatur
+      - sensor.aula_luftfuktighet
+      - sensor.aula_lufttryck
+
 homeassistant:
   customize:
     sensor.hue_motion_sensor_1_light_level:
@@ -47,4 +56,4 @@ sensor:
       hue_motion_sensor_1_temperature_x:
         friendly_name: 'Alex rum Temperatur'
         unit_of_measurement: '°C'
-        value_template: '{{ states("sensor.hue_motion_sensor_1_temperature") | round(1) }}'      
+        value_template: '{{ states("sensor.hue_motion_sensor_1_temperature") | round(1) + 2 }}'

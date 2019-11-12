@@ -1,0 +1,7 @@
+# Store all state to influx.
+influxdb:
+  host: !secret influx_host
+  port: !secret influx_port
+  database: !secret influx_database
+  max_retries: 3
+  default_measurement: state

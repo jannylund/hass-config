@@ -2,27 +2,27 @@
   state_topic: /robonect/health/climate/temperature
   name: 'Gardena Temperatur'
   unit_of_measurement: "°C"
-  value_template: '{{ value.split(" ")[0] | int }}'
   icon: mdi:thermometer
+  force_update: true
 
 - platform: mqtt
   state_topic: /robonect/health/climate/humidity
   name: 'Gardena Luftfuktighet'
   unit_of_measurement: "%"
-  value_template: '{{ value.split(" ")[0] | int }}'
   icon: mdi:water-percent
+  force_update: true
 
 - platform: mqtt
   state_topic: /robonect/mower/statistic/hours
   name: "Gardena Total Körtid"
   unit_of_measurement: 'h'
   icon: mdi:calendar-clock
+  force_update: true
 
 - platform: mqtt
   state_topic: /robonect/mower/battery/charge
   name: "gardena_battery_charge_raw"
-  value_template: '{{ value.split(" ")[0] }}'
-
+  force_update: true
 
 - platform: template
   sensors:
@@ -42,33 +42,35 @@
   state_topic: /robonect/health/voltage/batt
   name: "Gardena Spänning"
   unit_of_measurement: 'V'
-  value_template: '{{ value.split(" ")[0] | float }}'
   icon: mdi:car-battery
-  expire_after: 1200 
+  expire_after: 1200
+  force_update: true 
 
 - platform: mqtt
   state_topic: /robonect/mower/mode
   name: "Gardena Mode"
+  force_update: true
 
 - platform: mqtt
   state_topic: /robonect/mower/status
   name: "gardena_status_raw"
+  force_update: true
 
 - platform: mqtt
   state_topic: /robonect/wlan/rssi
   name: "Gardena Wifi signal"
   unit_of_measurement: 'dBm'
-  value_template: '{{ value.split(" ")[0] | int }}'
   icon: mdi:wifi
-  expire_after: 1200 
+  expire_after: 1200
+  force_update: true 
 
 - platform: mqtt
   state_topic: /robonect/mower/status/duration
   name: "Tid i status"
   unit_of_measurement: 'min'
-  value_template: '{{ value.split(" ")[0] | int }}'
   icon: mdi:timelapse
-  expire_after: 1200 
+  expire_after: 1200
+  force_update: true 
 
 - platform: template
   sensors:

@@ -4,8 +4,6 @@ group:
     view: true
     entities:
       - group.korridor
-      - group.grovkok
-      - group.arbetsrum
       - group.kok
 
   kok:
@@ -22,21 +20,13 @@ group:
       - sensor.korridor_light_level_x
       - sensor.korridor_temperature_x
 
-  grovkok:
-    name: Grovkök
-    control: hidden
-    entities:
-      - sensor.grovkok_temperatur
-      - sensor.grovkok_luftfuktighet
-      - sensor.grovkok_lufttryck
-
-  arbetsrum:
-    name: Arbetsrum
-    control: hidden
-    entities:
-      - sensor.arbetsrum_temperatur
-      - sensor.arbetsrum_luftfuktighet
-      - sensor.arbetsrum_lufttryck
+#  arbetsrum:
+#    name: Arbetsrum
+#    control: hidden
+#    entities:
+#      - sensor.arbetsrum_temperatur
+#      - sensor.arbetsrum_luftfuktighet
+#      - sensor.arbetsrum_lufttryck
 
 homeassistant:
   customize:
@@ -56,4 +46,4 @@ sensor:
       korridor_temperature_x:
         friendly_name: 'Korridor Temperatur'
         unit_of_measurement: '°C'
-        value_template: '{{ states("sensor.korridor_temperature") | round(1) }}'
+        value_template: '{{ states("sensor.korridor_temperature") | round(1) + 2 }}'

@@ -1,18 +1,7 @@
-group:
-  garage:
-    control: hidden
-    name: Garage
-    entities:
-      - light.sonoff_garage_lights
-      - sensor.sonoff_garage_temperature
-      - sensor.utomhus_temperatur
-      - switch.robot_area_cmd
-
 homeassistant:
   customize:
     light.sonoff_garage_lights:
       friendly_name: "Garage fasadbelysning"
-
     sensor.sonoff_garage_temperature:
       friendly_name: "Garage temperatur"
 
@@ -30,8 +19,51 @@ automation:
       - service: mqtt.publish
         data:
           topic: "/sonoff/garage/cmnd/state"
-          payload: ""
+          payload: ""  
 
+  - alias: 'Tänd utebelysning vid solnedgång eller 19:00'
+    trigger:
+      - platform: sun
+        event: sunset
+      - platform: time
+        at: '19:00:00'
+    action:
+      - service: homeassistant.turn_on
+        entity_id: light.sonoff_garage_lights
+
+  - alias: 'Släck utebelysning vid 01:00'
+    trigger:
+      - platform: time
+        at: '01:00:00'
+    action:
+      - service: homeassistant.turn_off
+        entity_id: light.sonoff_garage_lights
+
+  - alias: 'Tänd utebelysning vid 06:00'
+    trigger:
+      - platform: time
+        at: '06:00:00'
+    action:
+      - service: homeassistant.turn_on
+        entity_id: light.sonoff_garage_lights
+
+  - alias: 'Släck utebelysning när solen går upp eller klockan 08:45 (den som kommer senare)'
+    trigger:
+      - platform: sun
+        event: sunrise
+      - platform: time
+        at: '08:45:00'
+    condition:
+      - condition: sun
+        after: sunrise
+      - condition: time
+        after: '08:45:00'
+    action:
+      - service: homeassistant.turn_off
+        entity_id: light.sonoff_garage_lights
+
+
+# Garage fan
 light:
   - platform: mqtt
     name: sonoff_garage_lights
@@ -47,6 +79,7 @@ light:
     retain: false
 
 sensor:
+  # Garage temperature (vid dörren)
   - platform: mqtt
     state_topic: /sonoff/garage/tele/SENSOR
     name: sonoff_garage_temperature
@@ -54,7 +87,9 @@ sensor:
     icon: mdi:thermometer
     value_template: "{{ value_json['DS18B20'].Temperature }}"
     expire_after: !secret mqtt_timeout
+    force_update: true
 
+# Robot area switch.
 switch:
   - platform: command_line
     switches:
