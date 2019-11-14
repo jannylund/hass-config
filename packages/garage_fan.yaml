@@ -10,6 +10,16 @@ sensor:
       garage_thermal:
         temperature_sensor: sensor.sonoff_garagefan_temperature
         humidity_sensor: sensor.sonoff_garagefan_humidity
+  - platform: template
+    sensors:
+      sonoff_garagefan_status:
+        value_template: >
+          {% if states("switch.sonoff_garagefan") == "on" %}
+            1
+          {% else %}
+            0
+          {% endif %}
+
 
 automation:
   - alias: "Check garage fan power state on HA start-up"
@@ -26,10 +36,10 @@ automation:
           topic: "/sonoff/garagefan/cmnd/state"
           payload: ""
 
-  - alias: 'Starta fläkten varje timme om luftfuktighet är hög och absolut luftfuktighet är lägre utomhus.'
+  - alias: 'Starta fläkten om luftfuktighet är hög och absolut luftfuktighet är lägre utomhus.'
     trigger:
       platform: time_pattern
-      minutes: '/30'
+      minutes: '/15'
     condition:
       condition: and
       conditions:
@@ -37,20 +47,29 @@ automation:
           entity_id: switch.sonoff_garagefan
           state: 'off'
         - condition: template
-          value_template: '{{ states.sensor.ruuvi_garage_luftfuktighet.state|float > 55 }}'
+          value_template: '{{ states.sensor.ruuvi_garage_luftfuktighet.state|float > 60 }}'
         - condition: template
           value_template: '{{ states.sensor.garage_ruuvi_absolutehumidity.state|float > (states.sensor.outside_ruuvi_absolutehumidity.state|float)+1 }}'
     action:
       - service: switch.turn_on
         entity_id: switch.sonoff_garagefan
 
-  - alias: 'Stanna alltid fläkten efter 15 minuter.'
+  - alias: 'Stanna fläkten om luftfuktighet är ok, eller om absolut är nästan som utomhus.'
     trigger:
-      platform: state
-      entity_id: switch.sonoff_garagefan
-      to: 'on'
-      for:
-        minutes: 15
+      platform: time_pattern
+      minutes: '/15'
+    condition:
+      condition: and
+      conditions:
+        - condition: state
+          entity_id: switch.sonoff_garagefan
+          state: 'on'
+        - condition: or
+          conditions:
+            - condition: template
+              value_template: '{{ states.sensor.ruuvi_garage_luftfuktighet.state|float < 50 }}'
+            - condition: template
+              value_template: '{{ states.sensor.garage_ruuvi_absolutehumidity.state|float < (states.sensor.outside_ruuvi_absolutehumidity.state|float)+1 }}'
     action:
       - service: switch.turn_off
         entity_id: switch.sonoff_garagefan

@@ -9,6 +9,9 @@ views:
     title: Overview
     cards:
       - type: custom:mini-graph-card
+        name: Alex rum (24h)
+        hours_to_show: 24
+        points_per_hour: 2
         hour24: true
         entities:
           - sensor.hue_motion_sensor_1_temperature_x
@@ -18,30 +21,29 @@ views:
           average: true
         color_thresholds:
           - value: 20.1
-            color: !secret color_normal            
+            color: !secret color_normal
           - value: 20
             color: !secret color_cold
-        name: Alex rum
-        hours_to_show: 24
-        points_per_hour: 1
+#      - type: custom:mini-graph-card
+#        hour24: true
+#        entities:
+#          - sensor.cozify_motion_temperature
+#        show:
+#          labels: true
+#          extrema: true
+#          average: true
+#        color_thresholds:
+#          - value: 20.1
+#            color: !secret color_normal
+#          - value: 20
+#            color: !secret color_cold
+#        name: Linns rum
+#        hours_to_show: 24
+#        points_per_hour: 1
       - type: custom:mini-graph-card
-        hour24: true
-        entities:
-          - sensor.cozify_motion_temperature
-        show:
-          labels: true
-          extrema: true
-          average: true
-        color_thresholds:
-          - value: 20.1
-            color: !secret color_normal            
-          - value: 20
-            color: !secret color_cold
-        name: Linns rum
-        hours_to_show: 24
-        points_per_hour: 1
-      - type: custom:mini-graph-card
-        name: Frysen
+        name: Frysen (7d)
+        hours_to_show: 168
+        points_per_hour: 0.125
         hour24: true
         entities:
           - sensor.frys_temperatur
@@ -54,10 +56,10 @@ views:
             color: !secret color_warm
           - value: -18
             color: !secret color_cold
-        hours_to_show: 24
-        points_per_hour: 1
       - type: custom:mini-graph-card
-        name: Utomhus
+        name: Utomhus (7d)
+        hours_to_show: 168
+        points_per_hour: 0.25
         hour24: true
         entities:
           - sensor.ruuvi_utomhus_temperatur
@@ -66,13 +68,15 @@ views:
           extrema: true
           average: true
         color_thresholds:
-          - value: 20
-            color: !secret color_warm
-          - value: 10
+          - value: 0.1
+            color: !secret color_normal
+          - value: 0
             color: !secret color_cold
-        hours_to_show: 24
-        points_per_hour: 1
+ 
       - type: custom:mini-graph-card
+        name: Korridor (24h)
+        hours_to_show: 24
+        points_per_hour: 2
         hour24: true
         entities:
           - sensor.korridor_temperature_x
@@ -82,13 +86,14 @@ views:
           average: true
         color_thresholds:
           - value: 20.1
-            color: !secret color_normal            
+            color: !secret color_normal
           - value: 20
             color: !secret color_cold
-        name: Korridor
-        hours_to_show: 24
-        points_per_hour: 1
+
       - type: custom:mini-graph-card
+        name: Utomhus luftfuktighet (7d)
+        hours_to_show: 168
+        points_per_hour: 0.25
         hour24: true
         entities:
           - sensor.ruuvi_utomhus_luftfuktighet
@@ -102,12 +107,10 @@ views:
           - value: 60
             color: !secret color_normal
           - value: 41
-            color: !secret color_normal    
+            color: !secret color_normal
           - value: 40
             color: !secret color_cold
-        name: Utomhus luftfuktighet
-        hours_to_show: 24
-        points_per_hour: 1
+
 
 
   - path: garage
@@ -131,10 +134,20 @@ views:
       - entity: switch.sonoff_garagefan
         type: entity-button
         name: Fläkt
+
       - type: custom:mini-graph-card
+        name: Garage Lufttemperatur (48h)
+        hours_to_show: 48
+        points_per_hour: 1
         hour24: true
         entities:
           - sensor.ruuvi_garage_temperatur
+          - entity: sensor.garage_floorheating
+            color: gray
+            show_line: false
+            show_points: false
+            show_legend: false
+            y_axis: secondary
         show:
           labels: true
           extrema: true
@@ -144,15 +157,24 @@ views:
             color: !secret color_normal
           - value: 6
             color: !secret color_cold
-        name: Garage Lufttemperatur
-        hours_to_show: 48
-        points_per_hour: 1
+        line_width: 3
+
       - type: custom:mini-graph-card
+        name: Garage Golvtemperatur (48h)
+        hours_to_show: 48
+        points_per_hour: 2
         hour24: true
         entities:
           - sensor.garage_floorheating_current_temperature
+          - entity: sensor.garage_floorheating
+            color: gray
+            show_line: false
+            show_points: false
+            show_legend: false
+            y_axis: secondary
         show:
           labels: true
+          labels_secondary: true
           extrema: true
           average: true
         color_thresholds:
@@ -160,25 +182,31 @@ views:
             color: !secret color_normal
           - value: 10
             color: !secret color_cold
-        name: Garage Golvtemperatur
-        hours_to_show: 48
-        points_per_hour: 1
+        line_width: 3
+
       - type: custom:mini-graph-card
+        name: Garage Luftfuktighet (48h)
+        hours_to_show: 48
+        points_per_hour: 4
         hour24: true
         entities:
           - sensor.ruuvi_garage_luftfuktighet
+          - color: gray
+            entity: sensor.sonoff_garagefan_status
+            show_line: false
+            show_points: false
+            show_legend: false
+            y_axis: secondary
         show:
           labels: true
+          labels_secondary: true
           extrema: true
           average: true
         color_thresholds:
-          - value: 55
+          - value: 60
             color: !secret color_warm
-          - value: 55
+          - value: 59
             color: !secret color_normal
-        name: Garage Luftfuktighet
-        hours_to_show: 48
-        points_per_hour: 1
 
 # Config för garagevyn.
   - title: Garage2
@@ -221,7 +249,7 @@ views:
             graph: line
             icon: mdi:water-percent
             type: sensor
-            name: Absolut fuktighet            
+            name: Absolut fuktighet
 
         # RUUVI GARAGE START
         - type: markdown
