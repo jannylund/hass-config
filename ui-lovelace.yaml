@@ -116,18 +116,6 @@ views:
   - path: garage
     title: Garage
     cards:
-      - entity: sensor.garage_floorheating_today
-        type: sensor
-        name: Värmetid idag
-      - entity: sensor.garage_floorheating_cost_today
-        type: sensor
-        name: Värmekostnad idag
-      - entity: sensor.garage_floorheating_cost_yesterday
-        type: sensor
-        name: Värmekostnad igår
-      - entity: sensor.garage_floorheating_cost_all_time
-        type: sensor
-        name: Värmekostnad totalt
       - type: thermostat
         entity: climate.garage_floorheating
         name: Golvvärme
@@ -207,6 +195,23 @@ views:
             color: !secret color_warm
           - value: 59
             color: !secret color_normal
+
+      - entity: sensor.garage_floorheating_cost_all_time
+        type: sensor
+        name: Värmekostnad totalt
+
+      - type: custom:mini-graph-card
+        name: "Värmetid och kostnad"
+        hours_to_show: 168
+        hour24: true
+        aggregate_func: max
+        group_by: date
+        show:
+          graph: bar
+          legend: false
+        entities:
+          - sensor.garage_floorheating_today
+          - sensor.garage_floorheating_cost_today
 
 # Config för garagevyn.
   - title: Garage2
