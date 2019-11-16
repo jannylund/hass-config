@@ -126,7 +126,7 @@ views:
       - type: custom:mini-graph-card
         name: Garage Lufttemperatur (48h)
         hours_to_show: 48
-        points_per_hour: 1
+        points_per_hour: 2
         hour24: true
         entities:
           - sensor.ruuvi_garage_temperatur
