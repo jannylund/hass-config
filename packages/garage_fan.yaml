@@ -4,6 +4,21 @@ homeassistant:
     switch.garage_fan:
       friendly_name: "Garage fläkt"
 
+switch:
+  - platform: mqtt
+    name: garage_fan
+    icon: mdi:fan
+    state_topic: "/sonoff/garagefan/stat/RESULT"
+    value_template: "{{ value_json.POWER }}"
+    command_topic: "/sonoff/garagefan/cmnd/POWER"
+    availability_topic: "/sonoff/garagefan/tele/LWT"
+    qos: 1
+    payload_on: "ON"
+    payload_off: "OFF"
+    payload_available: "Online"
+    payload_not_available: "Offline"
+    retain: false
+
 # Store the total runtime of the fan in a variable.
 # NOTE! This is time _except_ today. The sensor with same name has it all.
 variable:
@@ -22,8 +37,7 @@ sensor:
           {% else %}
             0
           {% endif %}
-  - platform: template
-    sensors:
+
       garage_fan_runtime:
         unit_of_measurement: 'h'
         value_template: '{{ (states.variable.garage_fan_runtime.state | float) + (states.sensor.garage_fan_runtime_today.state | float) | round(2) }}'
@@ -54,6 +68,7 @@ sensor:
     type: time
     start: '{{ now().replace(hour=0).replace(minute=0).replace(second=0) }}'
     end: '{{ now() }}'
+
   - platform: history_stats
     name: garage_fan_runtime_yesterday
     entity_id: switch.garage_fan
@@ -125,18 +140,3 @@ automation:
       data:
         variable: garage_fan_runtime
         value_template: '{{ (variable.state | float) + (states.sensor.garage_fan_runtime_yesterday.state | float) }}'
-
-switch:
-  - platform: mqtt
-    name: garage_fan
-    icon: mdi:fan
-    state_topic: "/sonoff/garagefan/stat/RESULT"
-    value_template: "{{ value_json.POWER }}"
-    command_topic: "/sonoff/garagefan/cmnd/POWER"
-    availability_topic: "/sonoff/garagefan/tele/LWT"
-    qos: 1
-    payload_on: "ON"
-    payload_off: "OFF"
-    payload_available: "Online"
-    payload_not_available: "Offline"
-    retain: false
