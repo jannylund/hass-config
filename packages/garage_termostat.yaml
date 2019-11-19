@@ -1,10 +1,17 @@
 # Garage floor heating thermostat from https://github.com/algirdasc/hass-components/tree/master/floureon
 climate:
   - platform: floureon
+    name: garage_floorheating
     host: !secret garage_thermostat_host
     mac: !secret garage_thermostat_mac
-    name: garage_floorheating
     use_external_temp: true # use floorsensor!
+
+# NOTE! This is time _except_ today. The sensor with same name has it all.
+variable:
+  garage_floorheating_runtime:
+    value: 0
+    name: Garage Floorheating Runtime Offset.
+    restore: true
 
 # Make sensors out of them so we can trend them.
 sensor:
@@ -13,10 +20,12 @@ sensor:
       garage_floorheating_target_temperature:
         unit_of_measurement: '°C'
         value_template: '{{ states.climate.garage_floorheating.attributes.temperature }}'
+
       garage_floorheating_current_temperature:
         unit_of_measurement: '°C'
         value_template: '{{ states.climate.garage_floorheating.attributes.current_temperature }}'
-      garage_floorheating:
+
+      garage_floorheating_status:
         value_template: >
           {% if states.climate.garage_floorheating.attributes.hvac_action == "heating" %}
             1
@@ -24,30 +33,58 @@ sensor:
             0
           {% endif %}
 
+      garage_floorheating_runtime:
+        unit_of_measurement: 'h'
+        value_template: '{{ (states.variable.garage_floorheating_runtime.state | float) + (states.sensor.garage_floorheating_cost_today.state | float) | round(2) }}'
+
+      garage_floorheating_runtime_human:
+        value_template: >
+          {% set unformatted = (states.sensor.garage_floorheating_runtime.state | float) %}
+          {% set minutes = ((unformatted- (unformatted | int)) * 60 ) | round %}
+          {% set hours = (unformatted | int) % 24 %}
+          {% set days = ((unformatted | int) / 24) | int %}
+          {{ days }}d {{ hours }}h {{ minutes }}m
+
+      garage_floorheating_runtime_today_human:
+        value_template: >
+          {% set unformatted = (states.sensor.garage_floorheating_runtime_today.state | float) %}
+          {% set minutes = ((unformatted- (unformatted | int)) * 60 ) | round %}
+          {% set hours = (unformatted | int) %}
+          {{ hours }}h {{ minutes }}m
+
+      garage_floorheating_power_cost_today:
+        unit_of_measurement: '€'
+        value_template: '{{ (states("sensor.garage_floorheating_runtime_today") | float * 2.3 * 0.12) | round(2) }}'
+
+      garage_floorheating_power_cost:
+        unit_of_measurement: '€'
+        value_template: '{{ (states("sensor.garage_floorheating_runtime") | float * 2.3 * 0.12) | round(2) }}'
+
   # Heating time today
   - platform: history_stats
-    name: garage_floorheating_today
-    entity_id: sensor.garage_floorheating
+    name: garage_floorheating_runtime_today
+    entity_id: sensor.garage_floorheating_status
     state: 1
     type: time
     start: '{{ now().replace(hour=0).replace(minute=0).replace(second=0) }}'
     end: '{{ now() }}'
 
-  # Total heating time
   - platform: history_stats
-    name: garage_floorheating_all_time
-    entity_id: sensor.garage_floorheating
+    name: garage_floorheating_runtime_rolling_24h
+    entity_id: sensor.garage_floorheating_status
     state: 1
     type: time
-    start: '{{ 0 }}'
     end: '{{ now() }}'
+    duration:
+      hours: 24
 
-  # Heating cost for today, yesterday and all time
-  - platform: template
-    sensors:
-      garage_floorheating_cost_today:
-        unit_of_measurement: '€'
-        value_template: '{{ (states("sensor.garage_floorheating_today") | float * 2.3 * 0.12) | round(2) }}'
-      garage_floorheating_cost_all_time:
-        unit_of_measurement: '€'
-        value_template: '{{ (states("sensor.garage_floorheating_all_time") | float * 2.3 * 0.12) | round(2) }}'
+automation:
+  - alias: 'Uppdatera golvvärmens runtime vid midnatt'
+    trigger:
+    - platform: time
+      at: '00:00:00'
+    action:
+    - service: variable.set_variable
+      data:
+        variable: garage_floorheating_runtime
+        value_template: '{{ (variable.state | float) + (states.sensor.garage_floorheating_runtime_rolling_24h.state | float) }}'

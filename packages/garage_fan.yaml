@@ -70,11 +70,11 @@ sensor:
     end: '{{ now() }}'
 
   - platform: history_stats
-    name: garage_fan_runtime_yesterday
+    name: garage_fan_runtime_rolling_24h
     entity_id: switch.garage_fan
     state: "on"
     type: time
-    end: '{{ now().replace(hour=0).replace(minute=0).replace(second=0) }}'
+    end: '{{ now() }}'
     duration:
       hours: 24
 
@@ -131,7 +131,7 @@ automation:
       - service: switch.turn_off
         entity_id: switch.garage_fan
 
-  - alias: 'Uppdatera runtime vid midnatt'
+  - alias: 'Uppdatera garage fläkt runtime vid midnatt'
     trigger:
     - platform: time
       at: '00:00:00'
@@ -139,4 +139,4 @@ automation:
     - service: variable.set_variable
       data:
         variable: garage_fan_runtime
-        value_template: '{{ (variable.state | float) + (states.sensor.garage_fan_runtime_yesterday.state | float) }}'
+        value_template: '{{ (variable.state | float) + (states.sensor.garage_fan_runtime_rolling_24h.state | float) }}'

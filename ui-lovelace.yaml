@@ -125,7 +125,7 @@ views:
           hour24: true
           entities:
             - sensor.garage_floorheating_current_temperature
-            - entity: sensor.garage_floorheating
+            - entity: sensor.garage_floorheating_status
               color: gray
               show_line: false
               show_points: false
@@ -146,11 +146,11 @@ views:
           title: Värme
           show_header_toggle: false
           entities:
-            - entity: sensor.garage_floorheating_today
+            - entity: sensor.garage_floorheating_runtime_today_human
               name: Värmetid idag
-            - entity: sensor.garage_floorheating_all_time
+            - entity: sensor.garage_floorheating_runtime_human
               name: Total värmetid
-            - entity: sensor.garage_floorheating_cost_all_time
+            - entity: sensor.garage_floorheating_power_cost
               name: Total värmekostnad
         - type: thermostat
           entity: climate.garage_floorheating
@@ -165,7 +165,7 @@ views:
           hour24: true
           entities:
             - sensor.ruuvi_garage_temperatur
-            - entity: sensor.garage_floorheating
+            - entity: sensor.garage_floorheating_status
               color: gray
               show_line: false
               show_points: false
