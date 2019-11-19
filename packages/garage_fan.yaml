@@ -1,25 +1,67 @@
 # Sonoff controlled garage fan.
 homeassistant:
   customize:
-    switch.sonoff_garagefan:
+    switch.garage_fan:
       friendly_name: "Garage fläkt"
 
+# Store the total runtime of the fan in a variable.
+# NOTE! This is time _except_ today. The sensor with same name has it all.
+variable:
+  garage_fan_runtime:
+    value: 0
+    name: Garage Fan Runtime Offset.
+    restore: true
+
 sensor:
-  - platform: thermal_comfort
-    sensors:
-      garage_thermal:
-        temperature_sensor: sensor.sonoff_garagefan_temperature
-        humidity_sensor: sensor.sonoff_garagefan_humidity
   - platform: template
     sensors:
-      sonoff_garagefan_status:
+      garage_fan_status:
         value_template: >
-          {% if states("switch.sonoff_garagefan") == "on" %}
+          {% if states("switch.garage_fan") == "on" %}
             1
           {% else %}
             0
           {% endif %}
+  - platform: template
+    sensors:
+      garage_fan_runtime:
+        unit_of_measurement: 'h'
+        value_template: '{{ (states.variable.garage_fan_runtime.state | float) + (states.sensor.garage_fan_runtime_today.state | float) | round(2) }}'
 
+      garage_fan_runtime_human:
+        value_template: >
+          {% set unformatted = (states.sensor.garage_fan_runtime.state | float) %}
+          {% set minutes = ((unformatted- (unformatted | int)) * 60 ) | round %}
+          {% set hours = (unformatted | int) % 24 %}
+          {% set days = ((unformatted | int) / 24) | int %}
+          {{ days }}d {{ hours }}h {{ minutes }}m
+
+      garage_fan_runtime_today_human:
+        value_template: >
+          {% set unformatted = (states.sensor.garage_fan_runtime_today.state | float) %}
+          {% set minutes = ((unformatted- (unformatted | int)) * 60 ) | round %}
+          {% set hours = (unformatted | int) %}
+          {{ hours }}h {{ minutes }}m
+
+      garage_fan_power_cost:
+        unit_of_measurement: '€'
+        value_template: '{{ ((states.sensor.garage_fan_runtime.state | float) * 0.016 * 0.12) | round(2) }}'
+
+  - platform: history_stats
+    name: garage_fan_runtime_today
+    entity_id: switch.garage_fan
+    state: "on"
+    type: time
+    start: '{{ now().replace(hour=0).replace(minute=0).replace(second=0) }}'
+    end: '{{ now() }}'
+  - platform: history_stats
+    name: garage_fan_runtime_yesterday
+    entity_id: switch.garage_fan
+    state: "on"
+    type: time
+    end: '{{ now().replace(hour=0).replace(minute=0).replace(second=0) }}'
+    duration:
+      hours: 24
 
 automation:
   - alias: "Check garage fan power state on HA start-up"
@@ -44,7 +86,7 @@ automation:
       condition: and
       conditions:
         - condition: state
-          entity_id: switch.sonoff_garagefan
+          entity_id: switch.garage_fan
           state: 'off'
         - condition: template
           value_template: '{{ states.sensor.ruuvi_garage_luftfuktighet.state|float > 60 }}'
@@ -52,7 +94,7 @@ automation:
           value_template: '{{ states.sensor.garage_ruuvi_absolutehumidity.state|float > (states.sensor.outside_ruuvi_absolutehumidity.state|float)+1 }}'
     action:
       - service: switch.turn_on
-        entity_id: switch.sonoff_garagefan
+        entity_id: switch.garage_fan
 
   - alias: 'Stanna fläkten om luftfuktighet är ok, eller om absolut är nästan som utomhus.'
     trigger:
@@ -62,7 +104,7 @@ automation:
       condition: and
       conditions:
         - condition: state
-          entity_id: switch.sonoff_garagefan
+          entity_id: switch.garage_fan
           state: 'on'
         - condition: or
           conditions:
@@ -72,11 +114,21 @@ automation:
               value_template: '{{ states.sensor.garage_ruuvi_absolutehumidity.state|float < (states.sensor.outside_ruuvi_absolutehumidity.state|float)+1 }}'
     action:
       - service: switch.turn_off
-        entity_id: switch.sonoff_garagefan
+        entity_id: switch.garage_fan
+
+  - alias: 'Uppdatera runtime vid midnatt'
+    trigger:
+    - platform: time
+      at: '00:00:00'
+    action:
+    - service: variable.set_variable
+      data:
+        variable: garage_fan_runtime
+        value_template: '{{ (variable.state | float) + (states.sensor.garage_fan_runtime_yesterday.state | float) }}'
 
 switch:
   - platform: mqtt
-    name: sonoff_garagefan
+    name: garage_fan
     icon: mdi:fan
     state_topic: "/sonoff/garagefan/stat/RESULT"
     value_template: "{{ value_json.POWER }}"

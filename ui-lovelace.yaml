@@ -116,103 +116,138 @@ views:
   - path: garage
     title: Garage
     cards:
-      - type: thermostat
-        entity: climate.garage_floorheating
-        name: Golvvärme
-      - entity: switch.sonoff_garagefan
-        type: entity-button
-        name: Fläkt
+      - type: vertical-stack
+        cards:
+        - type: custom:mini-graph-card
+          name: Golvtemperatur (24h)
+          hours_to_show: 24
+          points_per_hour: 1
+          hour24: true
+          entities:
+            - sensor.garage_floorheating_current_temperature
+            - entity: sensor.garage_floorheating
+              color: gray
+              show_line: false
+              show_points: false
+              show_legend: false
+              y_axis: secondary
+          show:
+            labels: true
+            labels_secondary: true
+            extrema: true
+            average: true
+          color_thresholds:
+            - value: 10.1
+              color: !secret color_normal
+            - value: 10
+              color: !secret color_cold
+          line_width: 3
+        - type: entities
+          title: Värme
+          show_header_toggle: false
+          entities:
+            - entity: sensor.garage_floorheating_today
+              name: Värmetid idag
+            - entity: sensor.garage_floorheating_all_time
+              name: Total värmetid
+            - entity: sensor.garage_floorheating_cost_all_time
+              name: Total värmekostnad
+        - type: thermostat
+          entity: climate.garage_floorheating
+          name: Golvvärme
 
-      - type: custom:mini-graph-card
-        name: Garage Lufttemperatur (48h)
-        hours_to_show: 48
-        points_per_hour: 2
-        hour24: true
-        entities:
-          - sensor.ruuvi_garage_temperatur
-          - entity: sensor.garage_floorheating
-            color: gray
-            show_line: false
-            show_points: false
-            show_legend: false
-            y_axis: secondary
-        show:
-          labels: true
-          extrema: true
-          average: true
-        color_thresholds:
-          - value: 10
-            color: !secret color_normal
-          - value: 6
-            color: !secret color_cold
-        line_width: 3
+      - type: vertical-stack
+        cards:
+        - type: custom:mini-graph-card
+          name: Lufttemperatur (24h)
+          hours_to_show: 24
+          points_per_hour: 1
+          hour24: true
+          entities:
+            - sensor.ruuvi_garage_temperatur
+            - entity: sensor.garage_floorheating
+              color: gray
+              show_line: false
+              show_points: false
+              show_legend: false
+              y_axis: secondary
+          show:
+            labels: true
+            extrema: true
+            average: true
+          color_thresholds:
+            - value: 10
+              color: !secret color_normal
+            - value: 6
+              color: !secret color_cold
+          line_width: 3
 
-      - type: custom:mini-graph-card
-        name: Garage Golvtemperatur (48h)
-        hours_to_show: 48
-        points_per_hour: 2
-        hour24: true
-        entities:
-          - sensor.garage_floorheating_current_temperature
-          - entity: sensor.garage_floorheating
-            color: gray
-            show_line: false
-            show_points: false
-            show_legend: false
-            y_axis: secondary
-        show:
-          labels: true
-          labels_secondary: true
-          extrema: true
-          average: true
-        color_thresholds:
-          - value: 10.1
-            color: !secret color_normal
-          - value: 10
-            color: !secret color_cold
-        line_width: 3
+        - type: entities
+          title: Temperatur
+          show_header_toggle: false
+          entities:
+            - entity: sensor.ruuvi_utomhus_temperatur
+              name: Utomhustemperatur
+              secondary_info: last-changed
+            - entity: sensor.sonoff_garage_temperature
+              name: Temperatur vid dörren
+              secondary_info: last-changed
+            - entity: sensor.ruuvi_garage_temperatur
+              name: Garage temperatur
+              secondary_info: last-changed
+            - entity: sensor.garage_floorheating_current_temperature
+              name: Golvtemperatur
+              secondary_info: last-changed
 
-      - type: custom:mini-graph-card
-        name: Garage Luftfuktighet (48h)
-        hours_to_show: 48
-        points_per_hour: 4
-        hour24: true
-        entities:
-          - sensor.ruuvi_garage_luftfuktighet
-          - color: gray
-            entity: sensor.sonoff_garagefan_status
-            show_line: false
-            show_points: false
-            show_legend: false
-            y_axis: secondary
-        show:
-          labels: true
-          labels_secondary: true
-          extrema: true
-          average: true
-        color_thresholds:
-          - value: 60
-            color: !secret color_warm
-          - value: 59
-            color: !secret color_normal
+      - type: vertical-stack
+        cards:
+        - type: custom:mini-graph-card
+          name: Luftfuktighet (24h)
+          hours_to_show: 24
+          points_per_hour: 1
+          hour24: true
+          entities:
+            - sensor.ruuvi_garage_luftfuktighet
+            - color: gray
+              entity: sensor.garage_fan_status
+              show_line: false
+              show_points: false
+              show_legend: false
+              y_axis: secondary
+          show:
+            labels: true
+            labels_secondary: true
+            extrema: true
+            average: true
+          color_thresholds:
+            - value: 60
+              color: !secret color_warm
+            - value: 59
+              color: !secret color_normal
 
-      - entity: sensor.garage_floorheating_cost_all_time
-        type: sensor
-        name: Värmekostnad totalt
-
-      - type: custom:mini-graph-card
-        name: "Värmetid och kostnad"
-        hours_to_show: 168
-        hour24: true
-        aggregate_func: max
-        group_by: date
-        show:
-          graph: bar
-          legend: false
-        entities:
-          - sensor.garage_floorheating_today
-          - sensor.garage_floorheating_cost_today
-
+        - type: entities
+          title: Ventilation
+          show_header_toggle: false
+          entities:
+            - entity: switch.garage_fan
+              secondary_info: last-changed
+            - entity: sensor.garage_fan_runtime_today_human
+              name: Fläkttid idag
+            - entity: sensor.garage_fan_runtime_human
+              name: Fläkttid totalt
+            - entity: sensor.garage_fan_power_cost
+              name: Fläkt elkostnad totalt
+            - type: divider
+            - entity: sensor.outside_ruuvi_absolutehumidity
+              name: Absolut luftfuktighet utomhus
+              secondary_info: last-changed
+            - entity: sensor.garage_ruuvi_absolutehumidity
+              name: Absolut luftfuktighet garage
+              secondary_info: last-changed
+            - entity: sensor.ruuvi_garage_luftfuktighet
+              name: Relativ luftfuktighet garage
+              secondary_info: last-changed
+  
 # Config för garagevyn.
   - title: Garage2
     path: garage2
@@ -311,7 +346,7 @@ views:
           - light.sonoff_garage_lights
           - switch.robot_area_cmd
           - sensor.sonoff_garage_temperature
-          - switch.sonoff_garagefan
+          - switch.garage_fan
         show_header_toggle: false
         title: Garage
         type: entities
