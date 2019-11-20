@@ -35,7 +35,7 @@ sensor:
 
       garage_floorheating_runtime:
         unit_of_measurement: 'h'
-        value_template: '{{ (states.variable.garage_floorheating_runtime.state | float) + (states.sensor.garage_floorheating_cost_today.state | float) | round(2) }}'
+        value_template: '{{ (states.variable.garage_floorheating_runtime.state | float) + (states.sensor.garage_floorheating_runtime_today.state | float) | round(2) }}'
 
       garage_floorheating_runtime_human:
         value_template: >

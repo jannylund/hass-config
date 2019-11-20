@@ -148,10 +148,12 @@ views:
           entities:
             - entity: sensor.garage_floorheating_runtime_today_human
               name: Värmetid idag
+            - entity: sensor.garage_floorheating_power_cost_today
+              name: Värmekostnad idag              
             - entity: sensor.garage_floorheating_runtime_human
-              name: Total värmetid
+              name: Värmetid totalt
             - entity: sensor.garage_floorheating_power_cost
-              name: Total värmekostnad
+              name: Värmekostnad totalt
         - type: thermostat
           entity: climate.garage_floorheating
           name: Golvvärme
